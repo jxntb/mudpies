@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MudPies</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream:    #F5F0E8;
+      --parchment:#EDE5D4;
+      --sand:     #D9C9A8;
+      --clay:     #B8926A;
+      --terracotta: #A0614A;
+      --umber:    #6B4A32;
+      --bark:     #3E2A1A;
+      --sage:     #8A9A7A;
+      --moss:     #5C6E50;
+      --fog:      rgba(62,42,26,0.08);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--cream);
+      color: var(--bark);
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      font-size: 16px;
+      line-height: 1.8;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Grain overlay ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 100;
+      opacity: 0.025;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    }
+
+    /* ── Nav ── */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 2rem 5vw;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(245, 240, 232, 0.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--fog);
+    }
+
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      font-weight: 400;
+      letter-spacing: 0.12em;
+      color: var(--umber);
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 0.75rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--umber);
+      opacity: 0.7;
+      transition: opacity 0.3s;
+    }
+
+    .nav-links a:hover { opacity: 1; }
+
+    /* ── Hero ── */
+    .hero {
+      padding: 9vh 5vw 8vh;
+      max-width: 900px;
+      animation: fadeUp 1.1s cubic-bezier(0.16,1,0.3,1) both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .eyebrow {
+      font-size: 0.7rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--terracotta);
+      margin-bottom: 1.5rem;
+      animation: fadeUp 1.1s 0.1s cubic-bezier(0.16,1,0.3,1) both;
+    }
+
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.8rem, 6vw, 5.2rem);
+      font-weight: 300;
+      line-height: 1.08;
+      letter-spacing: -0.01em;
+      color: var(--bark);
+      max-width: 780px;
+      margin-bottom: 2rem;
+      animation: fadeUp 1.1s 0.18s cubic-bezier(0.16,1,0.3,1) both;
+    }
+
+    h1 em {
+      font-style: italic;
+      color: var(--umber);
+    }
+
+    .lede {
+      font-size: 1.05rem;
+      font-weight: 300;
+      color: var(--umber);
+      max-width: 500px;
+      line-height: 1.85;
+      margin-bottom: 3rem;
+      animation: fadeUp 1.1s 0.26s cubic-bezier(0.16,1,0.3,1) both;
+    }
+
+    /* ── Buttons ── */
+    .buttons {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      animation: fadeUp 1.1s 0.34s cubic-bezier(0.16,1,0.3,1) both;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      padding: 0.9rem 2.2rem;
+      background: var(--umber);
+      color: var(--parchment);
+      font-family: 'Jost', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 400;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 60px;
+      transition: background 0.35s, transform 0.2s;
+    }
+
+    .btn-primary:hover {
+      background: var(--bark);
+      transform: translateY(-1px);
+    }
+
+    .btn-ghost {
+      display: inline-block;
+      padding: 0.9rem 2.2rem;
+      background: transparent;
+      color: var(--umber);
+      font-family: 'Jost', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 400;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 60px;
+      border: 1px solid var(--clay);
+      transition: background 0.3s, border-color 0.3s, transform 0.2s;
+    }
+
+    .btn-ghost:hover {
+      background: var(--fog);
+      border-color: var(--umber);
+      transform: translateY(-1px);
+    }
+
+    /* ── Divider ── */
+    .divider {
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--sand), transparent);
+      margin: 6vh 5vw;
+      opacity: 0.6;
+    }
+
+    /* ── Feature strip ── */
+    .features {
+      display: flex;
+      gap: 0;
+      padding: 0 5vw;
+      border-top: 1px solid var(--fog);
+      border-bottom: 1px solid var(--fog);
+      animation: fadeUp 1.2s 0.5s cubic-bezier(0.16,1,0.3,1) both;
+    }
+
+    .feature {
+      flex: 1;
+      padding: 2.2rem 2rem;
+      border-right: 1px solid var(--fog);
+    }
+
+    .feature:last-child { border-right: none; }
+
+    .feature-icon {
+      width: 32px;
+      height: 32px;
+      margin-bottom: 1rem;
+      color: var(--terracotta);
+    }
+
+    .feature h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem;
+      font-weight: 400;
+      color: var(--umber);
+      margin-bottom: 0.4rem;
+    }
+
+    .feature p {
+      font-size: 0.85rem;
+      color: var(--clay);
+      line-height: 1.7;
+    }
+
+    /* ── About section ── */
+    #about {
+      padding: 8vh 5vw;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6vw;
+      align-items: center;
+    }
+
+    .about-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--terracotta);
+      margin-bottom: 1.2rem;
+    }
+
+    h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 3.5vw, 3rem);
+      font-weight: 300;
+      color: var(--bark);
+      line-height: 1.15;
+      margin-bottom: 1.5rem;
+    }
+
+    .about-text {
+      font-size: 1rem;
+      color: var(--umber);
+      line-height: 1.9;
+    }
+
+    /* ── Decorative swatch blob ── */
+    .about-visual {
+      position: relative;
+      aspect-ratio: 3/4;
+      border-radius: 48% 52% 44% 56% / 52% 44% 56% 48%;
+      overflow: hidden;
+      background: linear-gradient(145deg, var(--parchment) 0%, var(--sand) 45%, var(--clay) 100%);
+      box-shadow: inset 0 0 60px rgba(62,42,26,0.12);
+    }
+
+    .about-visual::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg viewBox='0 0 300 400' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='80' cy='280' r='90' fill='%23B8926A' fill-opacity='0.18'/%3E%3Ccircle cx='220' cy='120' r='70' fill='%236B4A32' fill-opacity='0.10'/%3E%3C/svg%3E") center / cover;
+    }
+
+    .swatch-text {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1.1rem;
+      color: var(--umber);
+      opacity: 0.7;
+      white-space: nowrap;
+    }
+
+    /* ── Pull quote ── */
+    .pullquote {
+      text-align: center;
+      padding: 7vh 5vw;
+      background: var(--parchment);
+      border-top: 1px solid var(--sand);
+      border-bottom: 1px solid var(--sand);
+    }
+
+    .pullquote blockquote {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: clamp(1.4rem, 2.5vw, 2rem);
+      font-weight: 300;
+      color: var(--umber);
+      max-width: 680px;
+      margin: 0 auto;
+      line-height: 1.5;
+    }
+
+    .pullquote cite {
+      display: block;
+      margin-top: 1.2rem;
+      font-family: 'Jost', sans-serif;
+      font-style: normal;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--clay);
+    }
+
+    /* ── Footer ── */
+    footer {
+      padding: 3rem 5vw;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--fog);
+    }
+
+    .footer-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      color: var(--umber);
+      opacity: 0.6;
+    }
+
+    .footer-note {
+      font-size: 0.75rem;
+      color: var(--clay);
+      opacity: 0.7;
+    }
+
+    /* ── Scroll reveal ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.9s cubic-bezier(0.16,1,0.3,1), transform 0.9s cubic-bezier(0.16,1,0.3,1);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 700px) {
+      #about { grid-template-columns: 1fr; }
+      .about-visual { aspect-ratio: 4/3; order: -1; }
+      .features { flex-direction: column; }
+      .feature { border-right: none; border-bottom: 1px solid var(--fog); }
+      .feature:last-child { border-bottom: none; }
+      footer { flex-direction: column; gap: 1rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="#" class="nav-logo">Mudpies</a>
+    <ul class="nav-links">
+      <li><a href="#collection">Collection</a></li>
+      <li><a href="#about">About</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <div class="hero" style="padding-left: 5vw; padding-right: 5vw;">
+      <p class="eyebrow">Mudpies Studio</p>
+      <h1>Artisan mudpies<br>made with <em>care.</em></h1>
+      <p class="lede">
+        Handcrafted, sun-dried, and thoughtfully made from selected natural materials.
+        Vegan, organic, and non-editable.
+      </p>
+      <div class="buttons">
+        <a href="#collection" class="btn-primary">View collection</a>
+        <a href="#about" class="btn-ghost">About the craft</a>
+      </div>
+    </div>
+
+    <div class="features reveal">
+      <div class="feature">
+        <svg class="feature-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="16" cy="16" r="12"/>
+          <path d="M10 22 C10 14 22 14 22 22"/>
+          <circle cx="16" cy="11" r="2.5" fill="currentColor" stroke="none"/>
+        </svg>
+        <h3>Handcrafted</h3>
+        <p>Each piece shaped slowly by hand, never replicated.</p>
+      </div>
+      <div class="feature">
+        <svg class="feature-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16 4 C8 8 4 14 8 20 C10 24 16 28 16 28 C16 28 22 24 24 20 C28 14 24 8 16 4Z"/>
+        </svg>
+        <h3>Natural materials</h3>
+        <p>Soil sourced mindfully — organic, vegan, earth-derived.</p>
+      </div>
+      <div class="feature">
+        <svg class="feature-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="6" y="10" width="20" height="14" rx="3"/>
+          <path d="M11 10 V8 a5 5 0 0 1 10 0 v2"/>
+          <circle cx="16" cy="17" r="2" fill="currentColor" stroke="none"/>
+        </svg>
+        <h3>Heirloom quality</h3>
+        <p>Finished to endure — objects that age beautifully.</p>
+      </div>
+    </div>
+
+    <section id="about" class="reveal">
+      <div>
+        <p class="about-label">Our craft</p>
+        <h2>Made slowly.<br>Finished in the sun</h2>
+        <p class="about-text">
+          MudPies are refined soil objects created with a focus on quality,
+          texture, and presentation. Each piece is made slowly, with attention to
+          detail and a high-end finish — objects that carry the messy dignity of
+          something truly handmade.
+        </p>
+      </div>
+      <div class="about-visual">
+        <span class="swatch-text">natural &amp; refined</span>
+      </div>
+    </section>
+
+    <div class="pullquote reveal">
+      <blockquote>
+        "Made with patience and stillness that fills a room."
+        <cite>— Studio ethos</cite>
+      </blockquote>
+    </div>
+  </main>
+
+  <footer>
+    <span class="footer-logo">Mudpies</span>
+    <span class="footer-note">Handcrafted with care &middot; Earth-derived materials</span>
+  </footer>
+
+  <script>
+    const els = document.querySelectorAll('.reveal');
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+    }, { threshold: 0.12 });
+    els.forEach(el => io.observe(el));
+  </script>
+</body>
+</html>
