@@ -1,5 +1,3 @@
-# MudPies
-
 Handcrafted from soil, sun, and hope.
 
 Vegan. Organic. Not for consumption.
