@@ -1,291 +1,332 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2685.4">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Process — MudPies</title>
+  
+  <!-- Preconnect to Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&amp;family=Jost:wght@300;400&amp;display=swap" rel="stylesheet">
+  
+  <!-- GSAP for cinematic zoom-through effect -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  
+  <style>
+    :root {
+      --cream: #F5F0E8;
+      --bark: #3E2A1A;
+      --umber: #6B4A32;
+      --clay: #B8926A;
+      --terracotta: #A0614A;
+    }
+
+    * { 
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box; 
+    }
+
+    body {
+      background-color: var(--bark);
+      color: var(--cream);
+      font-family: 'Jost', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Cinematic grain overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      opacity: 0.04;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 2rem 5vw;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 1000;
+      background: linear-gradient(to bottom, rgba(62,42,26,0.8), transparent);
+    }
+
+    .nav-logo,
+    .nav-links a {
+      color: var(--cream);
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      font-size: 0.8rem;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    /* Viewport container for pinned cinematic sections */
+    .viewport {
+      height: 100vh;
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .section {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      visibility: hidden;
+      opacity: 0;
+    }
+
+    .bg-image {
+      position: absolute;
+      width: 120%;
+      height: 120%;
+      background-size: cover;
+      background-position: center;
+      filter: brightness(0.4) contrast(1.1) sepia(0.2);
+      z-index: 1;
+      transition: filter 0.4s ease;
+    }
+
+    .content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      max-width: 600px;
+      padding: 20px;
+    }
+
+    .content h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3rem, 8vw, 6rem);
+      font-weight: 300;
+      margin-bottom: 1rem;
+      font-style: italic;
+    }
+
+    .content p {
+      font-size: 1rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      opacity: 0.8;
+      color: var(--clay);
+    }
+
+    /* Progress indicators */
+    .progress-wrap {
+      position: fixed;
+      right: 5vw;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      background: var(--cream);
+      border-radius: 50%;
+      opacity: 0.3;
+      transition: all 0.3s ease;
+    }
+
+    /* Scroll prompt */
+    .scroll-down {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      font-size: 0.7rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    @media (max-width: 768px) {
+      nav { padding: 1.5rem 4vw; }
+      .nav-links { gap: 1.5rem; }
+      .progress-wrap { right: 4vw; gap: 16px; }
+    }
   </style>
 </head>
 <body>
-<p class="p1">&lt;!doctype html&gt;</p>
-<p class="p1">&lt;html lang="en"&gt;</p>
-<p class="p1">&lt;head&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta charset="utf-8"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;title&gt;The Process — MudPies&lt;/title&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;link rel="preconnect" href="https://fonts.googleapis.com"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;link rel="preconnect" href="https://fonts.gstatic.com" crossorigin&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&amp;family=Jost:wght@300;400&amp;display=swap" rel="stylesheet"&gt;</p>
-<p class="p2"><span class="Apple-converted-space">  </span></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- GSAP for the "Zoom-Through" Cinematic Effect --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"&gt;&lt;/script&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"&gt;&lt;/script&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;style&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>:root {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>--cream: #F5F0E8;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>--bark: #3E2A1A;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>--umber: #6B4A32;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>--clay: #B8926A;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>--terracotta: #A0614A;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>* { margin: 0; padding: 0; box-sizing: border-box; }</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>body {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>background-color: var(--bark); /* Dark background for cinematic feel */</p>
-<p class="p1"><span class="Apple-converted-space">      </span>color: var(--cream);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-family: 'Jost', sans-serif;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>overflow-x: hidden;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>/* Cinematic Grain */</p>
-<p class="p1"><span class="Apple-converted-space">    </span>body::before {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>content: '';</p>
-<p class="p1"><span class="Apple-converted-space">      </span>position: fixed;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>inset: 0;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>z-index: 100;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>opacity: 0.04;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>pointer-events: none;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>nav {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>display: flex;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>justify-content: space-between;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>align-items: center;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>padding: 2rem 5vw;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>position: fixed;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>width: 100%;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>top: 0;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>z-index: 1000;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>background: linear-gradient(to bottom, rgba(62,42,26,0.8), transparent);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.nav-logo, .nav-links a {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>color: var(--cream);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>text-decoration: none;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>text-transform: uppercase;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>letter-spacing: 0.2em;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-size: 0.8rem;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.nav-links { display: flex; gap: 2rem; list-style: none; }</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>/* Zoom Container */</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.viewport {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>height: 100vh;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>width: 100%;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>position: relative;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>overflow: hidden;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.section {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>position: absolute;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>top: 0;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>left: 0;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>width: 100%;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>height: 100vh;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>display: flex;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>align-items: center;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>justify-content: center;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>visibility: hidden;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>opacity: 0;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.bg-image {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>position: absolute;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>width: 120%;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>height: 120%;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>background-size: cover;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>background-position: center;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>filter: brightness(0.4) contrast(1.1) sepia(0.2);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>z-index: 1;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.content {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>position: relative;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>z-index: 2;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>text-align: center;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>max-width: 600px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>padding: 20px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.content h2 {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-family: 'Cormorant Garamond', serif;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-size: clamp(3rem, 8vw, 6rem);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-weight: 300;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>margin-bottom: 1rem;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-style: italic;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.content p {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-size: 1rem;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>letter-spacing: 0.1em;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>text-transform: uppercase;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>opacity: 0.8;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>color: var(--clay);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>/* Progress Bar */</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.progress-wrap {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>position: fixed;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>right: 5vw;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>top: 50%;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>transform: translateY(-50%);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>z-index: 1000;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>display: flex;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>flex-direction: column;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>gap: 20px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>align-items: center;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.dot {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>width: 6px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>height: 6px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>background: var(--cream);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border-radius: 50%;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>opacity: 0.3;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>transition: 0.3s;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.scroll-down {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>position: fixed;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>bottom: 30px;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>left: 50%;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>transform: translateX(-50%);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>z-index: 100;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>font-size: 0.7rem;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>letter-spacing: 0.4em;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>text-transform: uppercase;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>opacity: 0.6;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/style&gt;</p>
-<p class="p1">&lt;/head&gt;</p>
-<p class="p1">&lt;body&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;nav&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;a href="index.html" class="nav-logo"&gt;Mudpies Studio&lt;/a&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;ul class="nav-links"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;li&gt;&lt;a href="index.html"&gt;Collection&lt;/a&gt;&lt;/li&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;li&gt;&lt;a href="process.html" style="border-bottom: 1px solid var(--cream);"&gt;The Process&lt;/a&gt;&lt;/li&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/ul&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/nav&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="scroll-down"&gt;Scroll to dig deeper&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="progress-wrap"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="dot"&gt;&lt;/div&gt;&lt;div class="dot"&gt;&lt;/div&gt;&lt;div class="dot"&gt;&lt;/div&gt;&lt;div class="dot"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;main class="viewport"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Stage 1: Extraction --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;section class="section" id="stage1"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="bg-image" style="background-image: url('https://images.unsplash.com/photo-1590133322383-217565bc9921?q=80&amp;w=2070&amp;auto=format&amp;fit=crop');"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="content"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;p&gt;I. Extraction&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;h2&gt;The Sift&lt;/h2&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/section&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Stage 2: Hydration --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;section class="section" id="stage2"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="bg-image" style="background-image: url('https://images.unsplash.com/photo-1565191999001-551c187427bb?q=80&amp;w=2070&amp;auto=format&amp;fit=crop');"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="content"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;p&gt;II. Hydration&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;h2&gt;Living Earth&lt;/h2&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/section&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Stage 3: Shaping --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;section class="section" id="stage3"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="bg-image" style="background-image: url('https://images.unsplash.com/photo-1459156260736-f07f53898101?q=80&amp;w=2069&amp;auto=format&amp;fit=crop');"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="content"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;p&gt;III. Composition&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;h2&gt;Hand Sculpted&lt;/h2&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/section&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Stage 4: Final Object --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;section class="section" id="stage4"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="bg-image" style="background-image: url('https://images.unsplash.com/photo-1610701596007-11502861dcfa?q=80&amp;w=2070&amp;auto=format&amp;fit=crop');"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="content"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;p&gt;IV. The Result&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;h2&gt;Refined Soil&lt;/h2&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;br&gt;&lt;br&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;a href="index.html" class="nav-logo" style="border: 1px solid var(--cream); padding: 15px 30px; border-radius: 50px;"&gt;Return to Collection&lt;/a&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/section&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/main&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- Scrolling Spacer --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div style="height: 600vh;"&gt;&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;script&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>gsap.registerPlugin(ScrollTrigger);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>const sections = gsap.utils.toArray(".section");</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const dots = gsap.utils.toArray(".dot");</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>// Initial state</p>
-<p class="p1"><span class="Apple-converted-space">    </span>gsap.set(sections[0], { autoAlpha: 1, visibility: "visible" });</p>
-<p class="p1"><span class="Apple-converted-space">    </span>gsap.set(dots[0], { opacity: 1, scale: 1.5 });</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>const tl = gsap.timeline({</p>
-<p class="p1"><span class="Apple-converted-space">      </span>scrollTrigger: {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>trigger: ".viewport",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>start: "top top",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>end: "bottom+=500% top",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>scrub: 1.5,</p>
-<p class="p1"><span class="Apple-converted-space">        </span>pin: true,</p>
-<p class="p1"><span class="Apple-converted-space">        </span>snap: 1 / (sections.length - 1)</p>
-<p class="p1"><span class="Apple-converted-space">      </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>});</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>sections.forEach((section, i) =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>if (i &gt; 0) {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>// Zoom-in effect for the background of the PREVIOUS section</p>
-<p class="p1"><span class="Apple-converted-space">        </span>tl.to(sections[i-1].querySelector(".bg-image"), {</p>
-<p class="p1"><span class="Apple-converted-space">          </span>scale: 4,</p>
-<p class="p1"><span class="Apple-converted-space">          </span>opacity: 0,</p>
-<p class="p1"><span class="Apple-converted-space">          </span>duration: 1.5,</p>
-<p class="p1"><span class="Apple-converted-space">          </span>ease: "power2.in"</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}, i)</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>// Zoom-out effect for the text of the PREVIOUS section</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.to(sections[i-1].querySelector(".content"), {</p>
-<p class="p1"><span class="Apple-converted-space">          </span>scale: 0.8,</p>
-<p class="p1"><span class="Apple-converted-space">          </span>opacity: 0,</p>
-<p class="p1"><span class="Apple-converted-space">          </span>duration: 1,</p>
-<p class="p1"><span class="Apple-converted-space">          </span>ease: "power2.in"</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}, i)</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>// Fade in CURRENT section</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.to(section, {</p>
-<p class="p1"><span class="Apple-converted-space">          </span>autoAlpha: 1,</p>
-<p class="p1"><span class="Apple-converted-space">          </span>visibility: "visible",</p>
-<p class="p1"><span class="Apple-converted-space">          </span>duration: 1</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}, i + 0.5)</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>// Update Nav Dots</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.to(dots[i-1], { opacity: 0.3, scale: 1 }, i + 0.5)</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.to(dots[i], { opacity: 1, scale: 1.5 }, i + 0.5);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>});</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>// Suble parallax movement on mouse</p>
-<p class="p1"><span class="Apple-converted-space">    </span>window.addEventListener("mousemove", (e) =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const x = (e.clientX / window.innerWidth - 0.5) * 20;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const y = (e.clientY / window.innerHeight - 0.5) * 20;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>gsap.to(".bg-image", { x: x, y: y, duration: 2, ease: "power2.out" });</p>
-<p class="p1"><span class="Apple-converted-space">    </span>});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/script&gt;</p>
-<p class="p1">&lt;/body&gt;</p>
-<p class="p1">&lt;/html&gt;</p>
+  <nav>
+    <a href="index.html" class="nav-logo">Mudpies Studio</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Collection</a></li>
+      <li><a href="process.html" style="border-bottom: 1px solid var(--cream);">The Process</a></li>
+    </ul>
+  </nav>
+
+  <div class="scroll-down">Scroll to dig deeper</div>
+
+  <div class="progress-wrap">
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+  </div>
+
+  <main class="viewport">
+    <!-- Stage 1: Extraction -->
+    <section class="section" id="stage1">
+      <div class="bg-image" style="background-image: url('https://images.unsplash.com/photo-1590133322383-217565bc9921?q=80&w=2070&auto=format&fit=crop');"></div>
+      <div class="content">
+        <p>I. Extraction</p>
+        <h2>The Sift</h2>
+      </div>
+    </section>
+
+    <!-- Stage 2: Hydration -->
+    <section class="section" id="stage2">
+      <div class="bg-image" style="background-image: url('https://images.unsplash.com/photo-1565191999001-551c187427bb?q=80&w=2070&auto=format&fit=crop');"></div>
+      <div class="content">
+        <p>II. Hydration</p>
+        <h2>Living Earth</h2>
+      </div>
+    </section>
+
+    <!-- Stage 3: Shaping -->
+    <section class="section" id="stage3">
+      <div class="bg-image" style="background-image: url('https://images.unsplash.com/photo-1459156260736-f07f53898101?q=80&w=2069&auto=format&fit=crop');"></div>
+      <div class="content">
+        <p>III. Composition</p>
+        <h2>Hand Sculpted</h2>
+      </div>
+    </section>
+
+    <!-- Stage 4: Final Object -->
+    <section class="section" id="stage4">
+      <div class="bg-image" style="background-image: url('https://images.unsplash.com/photo-1610701596007-11502861dcfa?q=80&w=2070&auto=format&fit=crop');"></div>
+      <div class="content">
+        <p>IV. The Result</p>
+        <h2>Refined Soil</h2>
+        <br><br>
+        <a href="index.html" class="nav-logo" style="border: 1px solid var(--cream); padding: 15px 30px; border-radius: 50px; display: inline-block;">Return to Collection</a>
+      </div>
+    </section>
+  </main>
+
+  <!-- Scrolling spacer for ScrollTrigger -->
+  <div style="height: 600vh;"></div>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    const sections = gsap.utils.toArray(".section");
+    const dots = gsap.utils.toArray(".dot");
+    const bgImages = gsap.utils.toArray(".bg-image");
+
+    // Initial state for first section
+    gsap.set(sections[0], { autoAlpha: 1, visibility: "visible" });
+    gsap.set(dots[0], { opacity: 1, scale: 1.5 });
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: ".viewport",
+        start: "top top",
+        end: "bottom+=500% top",
+        scrub: 1.5,
+        pin: true,
+        snap: {
+          snapTo: 1 / (sections.length - 1),
+          duration: 0.4,
+          ease: "power1.inOut"
+        }
+      }
+    });
+
+    // Build timeline for each transition
+    sections.forEach((section, i) => {
+      if (i > 0) {
+        const prevSection = sections[i - 1];
+        const prevBg = prevSection.querySelector(".bg-image");
+        const prevContent = prevSection.querySelector(".content");
+
+        // Position each transition at evenly spaced timeline points
+        const position = i;
+
+        // Zoom-in + fade previous background
+        tl.to(prevBg, {
+          scale: 4,
+          opacity: 0,
+          duration: 1.5,
+          ease: "power2.in"
+        }, position);
+
+        // Zoom-out previous content
+        tl.to(prevContent, {
+          scale: 0.8,
+          opacity: 0,
+          duration: 1,
+          ease: "power2.in"
+        }, position);
+
+        // Fade in current section
+        tl.to(section, {
+          autoAlpha: 1,
+          visibility: "visible",
+          duration: 1
+        }, position + 0.5);
+
+        // Update progress dots
+        tl.to(dots[i - 1], { opacity: 0.3, scale: 1 }, position + 0.5);
+        tl.to(dots[i], { opacity: 1, scale: 1.5 }, position + 0.5);
+      }
+    });
+
+    // Subtle parallax on active background only (optimised)
+    let currentIndex = 0;
+    window.addEventListener("mousemove", (e) => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 20;
+      const y = (e.clientY / window.innerHeight - 0.5) * 20;
+      
+      // Only animate the currently visible background
+      if (bgImages[currentIndex]) {
+        gsap.to(bgImages[currentIndex], { 
+          x: x, 
+          y: y, 
+          duration: 1.2, 
+          ease: "power2.out",
+          overwrite: "auto"
+        });
+      }
+    });
+
+    // Optional: update currentIndex on scroll (for future extension)
+    ScrollTrigger.create({
+      trigger: ".viewport",
+      start: "top top",
+      end: "bottom bottom",
+      onUpdate: (self) => {
+        const progress = self.progress;
+        currentIndex = Math.round(progress * (sections.length - 1));
+      }
+    });
+  </script>
 </body>
 </html>
