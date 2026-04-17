@@ -219,9 +219,9 @@
       </div>
     </section>
 
-    <!-- Stage 4: Final Object -->
+    <!-- Stage 4: Final Object (Refined Soil) — now uses authentic handmade clay pottery image -->
     <section class="section" id="stage4">
-      <div class="bg-image" style="background-image: url('https://images.unsplash.com/photo-1610701596007-11502861dcfa?q=80&w=2070&auto=format&fit=crop');"></div>
+      <div class="bg-image" style="background-image: url('https://images.unsplash.com/photo-1581783898377-6b2c3c2e0f2a?q=80&w=2070&auto=format&fit=crop');"></div>
       <div class="content">
         <p>IV. The Result</p>
         <h2>Refined Soil</h2>
@@ -231,8 +231,8 @@
     </section>
   </main>
 
-  <!-- Scrolling spacer for ScrollTrigger -->
-  <div style="height: 600vh;"></div>
+  <!-- Precise scrolling spacer — exactly 300vh for 4 sections (no further scroll possible) -->
+  <div style="height: 300vh;"></div>
 
   <script>
     gsap.registerPlugin(ScrollTrigger);
@@ -240,6 +240,7 @@
     const sections = gsap.utils.toArray(".section");
     const dots = gsap.utils.toArray(".dot");
     const bgImages = gsap.utils.toArray(".bg-image");
+    const numSections = sections.length;
 
     // Initial state for first section
     gsap.set(sections[0], { autoAlpha: 1, visibility: "visible" });
@@ -249,11 +250,11 @@
       scrollTrigger: {
         trigger: ".viewport",
         start: "top top",
-        end: "bottom+=500% top",
+        end: `bottom+=${(numSections - 1) * 100}vh top`,
         scrub: 1.5,
         pin: true,
         snap: {
-          snapTo: 1 / (sections.length - 1),
+          snapTo: 1 / (numSections - 1),
           duration: 0.4,
           ease: "power1.inOut"
         }
@@ -267,7 +268,6 @@
         const prevBg = prevSection.querySelector(".bg-image");
         const prevContent = prevSection.querySelector(".content");
 
-        // Position each transition at evenly spaced timeline points
         const position = i;
 
         // Zoom-in + fade previous background
@@ -299,13 +299,12 @@
       }
     });
 
-    // Subtle parallax on active background only (optimised)
+    // Subtle parallax on active background only
     let currentIndex = 0;
     window.addEventListener("mousemove", (e) => {
       const x = (e.clientX / window.innerWidth - 0.5) * 20;
       const y = (e.clientY / window.innerHeight - 0.5) * 20;
       
-      // Only animate the currently visible background
       if (bgImages[currentIndex]) {
         gsap.to(bgImages[currentIndex], { 
           x: x, 
@@ -317,7 +316,7 @@
       }
     });
 
-    // Optional: update currentIndex on scroll (for future extension)
+    // Track current section for parallax
     ScrollTrigger.create({
       trigger: ".viewport",
       start: "top top",
