@@ -219,7 +219,7 @@
       </div>
     </section>
 
-    <!-- Stage 4: Final Object (Refined Soil) — now uses authentic handmade clay pottery image -->
+    <!-- Stage 4: Final Object (Refined Soil) — handmade clay pottery image -->
     <section class="section" id="stage4">
       <div class="bg-image" style="background-image: url('https://images.unsplash.com/photo-1581783898377-6b2c3c2e0f2a?q=80&w=2070&auto=format&fit=crop');"></div>
       <div class="content">
@@ -230,9 +230,6 @@
       </div>
     </section>
   </main>
-
-  <!-- Precise scrolling spacer — exactly 300vh for 4 sections (no further scroll possible) -->
-  <div style="height: 300vh;"></div>
 
   <script>
     gsap.registerPlugin(ScrollTrigger);
@@ -250,9 +247,10 @@
       scrollTrigger: {
         trigger: ".viewport",
         start: "top top",
-        end: `bottom+=${(numSections - 1) * 100}vh top`,
+        end: `+=${(numSections - 1) * 100}vh`,
         scrub: 1.5,
         pin: true,
+        pinSpacing: true,
         snap: {
           snapTo: 1 / (numSections - 1),
           duration: 0.4,
