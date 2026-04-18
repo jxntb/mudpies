@@ -7,7 +7,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Jost:wght@300;400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=Jost:wght@300;400&display=swap" rel="stylesheet">
 
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -15,30 +15,27 @@
 :root {
   --cream:#F5F0E8;
   --umber:#6B4A32;
-  --bark:#3E2A1A;
   --fog:rgba(62,42,26,0.08);
 }
 
 body {
   font-family:'Jost', sans-serif;
-  background:var(--cream);
-  color:white;
+  background:black;
   overflow-x:hidden;
 }
 
-/* NAV (same as index) */
+/* NAV */
 nav {
+  position:fixed;
+  top:0;
+  width:100%;
+  z-index:10;
   display:flex;
   justify-content:space-between;
   align-items:center;
   padding:2rem 5vw;
-  position:fixed;
-  width:100%;
-  top:0;
-  z-index:20;
   background:rgba(245,240,232,0.85);
-  backdrop-filter:blur(12px);
-  border-bottom:1px solid var(--fog);
+  backdrop-filter:blur(10px);
 }
 
 .nav-logo {
@@ -48,15 +45,12 @@ nav {
   text-decoration:none;
 }
 
-.nav-logo img {
-  width:50px;
-  height:50px;
-}
+.nav-logo img { width:50px; }
 
 .nav-logo span {
   font-family:'Cormorant Garamond', serif;
-  font-size:1.4rem;
   color:var(--umber);
+  font-size:1.4rem;
 }
 
 .nav-links {
@@ -74,54 +68,62 @@ nav {
   opacity:0.7;
 }
 
-/* PROCESS SECTIONS */
-.section {
-  height:100vh;
+/* SCROLL HEIGHT (controls duration of experience) */
+.scroll-container {
+  height:400vh;
+}
+
+/* FIXED STAGE */
+.stage {
+  position:fixed;
+  inset:0;
   display:flex;
   align-items:center;
   justify-content:center;
-  text-align:center;
-  padding:0 5vw;
-  position:relative;
+  overflow:hidden;
 }
 
-/* background images */
-.s1 { background:url('https://images.wallpaperscraft.com/image/single/sand_dunes_stones_1240621_1280x720.jpg') center/cover no-repeat; }
-.s2 { background:url('https://w0.peakpx.com/wallpaper/13/373/HD-wallpaper-a-wonderful-canadian-lake-forest-sky-lake-mountains.jpg') center/cover no-repeat; }
-.s3 { background:url('https://images.unsplash.com/photo-1771523350747-638a89667c8f?q=80&w=774&auto=format&fit=crop') center/cover no-repeat; }
-.s4 { background:url('https://images.unsplash.com/photo-1690322679888-cc449aa1e0d9?q=80&w=1740&auto=format&fit=crop') center/cover no-repeat; }
+/* BACKGROUNDS */
+.bg {
+  position:absolute;
+  inset:0;
+  background-size:cover;
+  background-position:center;
+  opacity:0;
+  transition:opacity 0.8s ease;
+}
 
-/* dark overlay for readability */
-.section::after {
+.bg.active {
+  opacity:1;
+}
+
+.bg::after {
   content:'';
   position:absolute;
   inset:0;
   background:rgba(0,0,0,0.45);
 }
 
-/* centered text */
-.content {
+/* TEXT */
+.text {
   position:relative;
   z-index:2;
+  color:white;
+  text-align:center;
+  opacity:0;
+  transform:translateY(20px);
+  transition:all 0.6s ease;
+}
+
+.text.active {
+  opacity:1;
+  transform:translateY(0);
 }
 
 h1 {
   font-family:'Cormorant Garamond', serif;
   font-size:clamp(2.5rem,5vw,4.5rem);
   font-weight:300;
-  letter-spacing:0.05em;
-}
-
-/* subtle fade-in */
-.fade {
-  opacity:0;
-  transform:translateY(20px);
-  transition:0.8s ease;
-}
-
-.fade.visible {
-  opacity:1;
-  transform:translateY(0);
 }
 </style>
 </head>
@@ -130,7 +132,7 @@ h1 {
 
 <nav>
   <a href="./index.html" class="nav-logo">
-    <img src="./logo.png" alt="logo">
+    <img src="./logo.png">
     <span>Mudpies</span>
   </a>
   <ul class="nav-links">
@@ -139,46 +141,47 @@ h1 {
   </ul>
 </nav>
 
-<main>
+<div class="scroll-container"></div>
 
-<section class="section s1">
-  <div class="content fade">
-    <h1>1. The Sift</h1>
-  </div>
-</section>
+<div class="stage">
 
-<section class="section s2">
-  <div class="content fade">
-    <h1>2. Breathing</h1>
-  </div>
-</section>
+  <!-- BACKGROUNDS -->
+  <div class="bg" id="bg1" style="background-image:url('https://images.wallpaperscraft.com/image/single/sand_dunes_stones_1240621_1280x720.jpg')"></div>
+  <div class="bg" id="bg2" style="background-image:url('https://w0.peakpx.com/wallpaper/13/373/HD-wallpaper-a-wonderful-canadian-lake-forest-sky-lake-mountains.jpg')"></div>
+  <div class="bg" id="bg3" style="background-image:url('https://images.unsplash.com/photo-1771523350747-638a89667c8f?q=80&w=774&auto=format&fit=crop')"></div>
+  <div class="bg" id="bg4" style="background-image:url('https://images.unsplash.com/photo-1690322679888-cc449aa1e0d9?q=80&w=1740&auto=format&fit=crop')"></div>
 
-<section class="section s3">
-  <div class="content fade">
-    <h1>3. Hand Crafted</h1>
-  </div>
-</section>
+  <!-- TEXT -->
+  <div class="text" id="t1"><h1>1. The Sift</h1></div>
+  <div class="text" id="t2"><h1>2. Breathing Earth</h1></div>
+  <div class="text" id="t3"><h1>3. Hand Crafted</h1></div>
+  <div class="text" id="t4"><h1>4. Refined Earth</h1></div>
 
-<section class="section s4">
-  <div class="content fade">
-    <h1>4. Refined</h1>
-  </div>
-</section>
-
-</main>
+</div>
 
 <script>
-const els = document.querySelectorAll('.fade');
+const steps = 4;
 
-const io = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      e.target.classList.add('visible');
-    }
-  });
-}, { threshold: 0.4 });
+function updateScene() {
+  const scroll = window.scrollY;
+  const height = document.body.scrollHeight - window.innerHeight;
+  const progress = scroll / height;
 
-els.forEach(el => io.observe(el));
+  const index = Math.min(steps - 1, Math.floor(progress * steps));
+
+  // reset all
+  for (let i = 1; i <= steps; i++) {
+    document.getElementById('bg'+i).classList.remove('active');
+    document.getElementById('t'+i).classList.remove('active');
+  }
+
+  // activate current
+  document.getElementById('bg'+(index+1)).classList.add('active');
+  document.getElementById('t'+(index+1)).classList.add('active');
+}
+
+window.addEventListener('scroll', updateScene);
+window.addEventListener('load', updateScene);
 </script>
 
 </body>
