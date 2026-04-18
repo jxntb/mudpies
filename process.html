@@ -1,329 +1,438 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>The Process — MudPies</title>
-  
-  <!-- Preconnect to Google Fonts -->
+  <title>MudPies</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&amp;family=Jost:wght@300;400&amp;display=swap" rel="stylesheet">
-  
-  <!-- GSAP for cinematic zoom-through effect -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-  
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400&display=swap" rel="stylesheet">
   <style>
+    /* ── TUNABLE VARIABLES AT THE TOP ──────────────────────────── */
+    /* Adjust these to control vertical spacing and scroll thresholds */
+
+    /* 1. Page padding “breathing room” per section */
     :root {
-      --cream: #F5F0E8;
-      --bark: #3E2A1A;
-      --umber: #6B4A32;
-      --clay: #B8926A;
-      --terracotta: #A0614A;
+      --cream:        #F5F0E8;
+      --parchment:    #EDE5D4;
+      --sand:         #D9C9A8;
+      --clay:         #B8926A;
+      --terracotta:   #A0614A;
+      --umber:        #6B4A32;
+      --bark:         #3E2A1A;
+      --sage:         #8A9A7A;
+      --moss:         #5C6E50;
+      --fog:          rgba(62,42,26,0.08);
+
+      /* Hero section vertical padding (top/bottom) */
+      --hero-padding-v: 9vh;
+
+      /* About section padding (top/bottom) */
+      --about-padding-v: 8vh;
+
+      /* Divider margin (top/bottom) */
+      --divider-margin-v: 6vh;
+
+      /* Pullquote section padding */
+      --pullquote-padding-v: 7vh;
+
+      /* Footer padding */
+      --footer-padding-v: 3rem;
     }
 
-    * { 
-      margin: 0; 
-      padding: 0; 
-      box-sizing: border-box; 
-    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
 
     body {
-      background-color: var(--bark);
-      color: var(--cream);
+      background-color: var(--cream);
+      color: var(--bark);
       font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      font-size: 16px;
+      line-height: 1.8;
+      min-height: 100vh;
       overflow-x: hidden;
     }
 
-    /* Cinematic grain overlay */
+    /* ── Grain overlay ── */
     body::before {
       content: '';
       position: fixed;
       inset: 0;
-      z-index: 100;
-      opacity: 0.04;
       pointer-events: none;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      z-index: 100;
+      opacity: 0.025;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
     }
 
+    /* ── Nav ── */
     nav {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 2rem 5vw;
-      position: fixed;
-      width: 100%;
+      position: sticky;
       top: 0;
-      z-index: 1000;
-      background: linear-gradient(to bottom, rgba(62,42,26,0.8), transparent);
+      z-index: 10;
+      background: rgba(245, 240, 232, 0.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--fog);
     }
 
-    .nav-logo,
-    .nav-links a {
-      color: var(--cream);
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      font-weight: 400;
+      letter-spacing: 0.12em;
+      color: var(--umber);
       text-decoration: none;
-      text-transform: uppercase;
-      letter-spacing: 0.2em;
-      font-size: 0.8rem;
     }
 
     .nav-links {
       display: flex;
-      gap: 2rem;
+      gap: 2.5rem;
       list-style: none;
     }
 
-    /* Viewport container for pinned cinematic sections */
-    .viewport {
-      height: 100vh;
-      width: 100%;
+    .nav-links a {
+      font-size: 0.75rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--umber);
+      opacity: 0.7;
+      transition: opacity 0.3s;
+    }
+
+    .nav-links a:hover { opacity: 1; }
+
+    /* ── Hero ── (SIFT / sand‑dunes background) */
+    .hero {
+      /* Uses: images.wallpaperscraft.com sand dunes / stones */
+      background: url('https://images.wallpaperscraft.com/image/single/sand_dunes_stones_1240621_1280x720.jpg') center/cover;
+      padding: var(--hero-padding-v) 5vw;   /* ← Change spacing here */
+      max-width: 1100px;
+      margin: 0 auto;
+      color: white;  /* white text on dark image */
+      text-shadow: 0 0 8px rgba(0,0,0,0.5);
+      animation: fadeUp 1.1s cubic-bezier(0.16,1,0.3,1) both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .eyebrow {
+      font-size: 0.7rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--terracotta);
+      margin-bottom: 1.5rem;
+      animation: fadeUp 1.1s 0.1s cubic-bezier(0.16,1,0.3,1) both;
+    }
+
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.8rem, 6vw, 5.2rem);
+      font-weight: 300;
+      line-height: 1.08;
+      letter-spacing: -0.01em;
+      color: var(--bark);
+      max-width: 780px;
+      margin-bottom: 2rem;
+      animation: fadeUp 1.1s 0.18s cubic-bezier(0.16,1,0.3,1) both;
+    }
+
+    h1 em {
+      font-style: italic;
+      color: var(--umber);
+    }
+
+    .lede {
+      font-size: 1.05rem;
+      font-weight: 300;
+      color: var(--umber);
+      max-width: 500px;
+      line-height: 1.85;
+      margin-bottom: 3rem;
+      animation: fadeUp 1.1s 0.26s cubic-bezier(0.16,1,0.3,1) both;
+    }
+
+    /* ── Buttons ── */
+    .buttons {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      animation: fadeUp 1.1s 0.34s cubic-bezier(0.16,1,0.3,1) both;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      padding: 0.9rem 2.2rem;
+      background: var(--umber);
+      color: var(--parchment);
+      font-family: 'Jost', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 400;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 60px;
+      transition: background 0.35s, transform 0.2s;
+    }
+
+    .btn-primary:hover {
+      background: var(--bark);
+      transform: translateY(-1px);
+    }
+
+    .btn-ghost {
+      display: inline-block;
+      padding: 0.9rem 2.2rem;
+      background: transparent;
+      color: var(--umber);
+      font-family: 'Jost', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 400;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 60px;
+      border: 1px solid var(--clay);
+      transition: background 0.3s, border-color 0.3s, transform 0.2s;
+    }
+
+    .btn-ghost:hover {
+      background: var(--fog);
+      border-color: var(--umber);
+      transform: translateY(-1px);
+    }
+
+    /* ── Divider ── (adjustable vertical margin) */
+    .divider {
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--sand), transparent);
+      margin: var(--divider-margin-v) 5vw;
+      opacity: 0.6;
+    }
+
+    /* ── Feature strip ── */
+    .features {
+      display: flex;
+      gap: 0;
+      padding: 3rem 5vw 4rem; /* ↑ increase if you want more scroll space after features */
+      border-top: 1px solid var(--fog);
+      border-bottom: 1px solid var(--fog);
+      animation: fadeUp 1.2s 0.5s cubic-bezier(0.16,1,0.3,1) both;
+    }
+
+    .feature {
+      flex: 1;
+      padding: 2.2rem 2rem;
+      border-right: 1px solid var(--fog);
+    }
+
+    .feature:last-child { border-right: none; }
+
+    .feature-icon {
+      width: 32px;
+      height: 32px;
+      margin-bottom: 1rem;
+      color: var(--terracotta);
+    }
+
+    .feature h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem;
+      font-weight: 400;
+      color: var(--umber);
+      margin-bottom: 0.4rem;
+    }
+
+    .feature p {
+      font-size: 0.85rem;
+      color: var(--clay);
+      line-height: 1.7;
+    }
+
+    /* ── About section (HAND SCULPTED / zoomed in hand image) */
+    #about {
+      /* Uses: zoomed in, hand‑with‑clay style */
+      background: url('https://images.unsplash.com/photo-1771523350747-638a89667c8f?q=80&w=774&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') center/cover;
+      padding: var(--about-padding-v) 5vw;  /* ← Change spacing here */
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6vw;
+      align-items: center;
+      color: white;
+      text-shadow: 0 0 8px rgba(0,0,0,0.6);
+      /* Keep this section taller so scrolling is smoother */
+      min-height: 110vh;  /* ← Control “how much scroll” this section takes */
+    }
+
+    .about-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--terracotta);
+      margin-bottom: 1.2rem;
+    }
+
+    h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 3.5vw, 3rem);
+      font-weight: 300;
+      color: var(--bark);
+      line-height: 1.15;
+      margin-bottom: 1.5rem;
+    }
+
+    .about-text {
+      font-size: 1rem;
+      color: var(--umber);
+      line-height: 1.9;
+    }
+
+    /* ── Decorative swatch blob ── */
+    .about-visual {
       position: relative;
+      aspect-ratio: 3/4;
+      border-radius: 48% 52% 44% 56% / 52% 44% 56% 48%;
       overflow: hidden;
     }
 
-    .section {
+    .swatch-text {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      visibility: hidden;
-      opacity: 0;
-    }
-
-    .bg-image {
-      position: absolute;
-      width: 120%;
-      height: 120%;
-      background-size: cover;
-      background-position: center;
-      filter: brightness(0.4) contrast(1.1) sepia(0.2);
-      z-index: 1;
-      transition: filter 0.4s ease;
-    }
-
-    .content {
-      position: relative;
-      z-index: 2;
-      text-align: center;
-      max-width: 600px;
-      padding: 20px;
-    }
-
-    .content h2 {
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
       font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(3rem, 8vw, 6rem);
-      font-weight: 300;
-      margin-bottom: 1rem;
       font-style: italic;
+      font-size: 1.1rem;
+      color: var(--umber);
+      opacity: 0.7;
+      white-space: nowrap;
     }
 
-    .content p {
-      font-size: 1rem;
-      letter-spacing: 0.1em;
+    /* ── Pull quote (REFINED SOIL background) */
+    .pullquote {
+      /* Uses: refined soil / studio‑style clay */
+      background: url('https://images.unsplash.com/photo-1690322679888-cc449aa1e0d9?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') center/cover;
+      padding: var(--pullquote-padding-v) 5vw; /* ↑ adjust spacing */
+      text-align: center;
+      color: white;
+      text-shadow: 0 0 8px rgba(0,0,0,0.6);
+      border: none;
+    }
+
+    .pullquote blockquote {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: clamp(1.4rem, 2.5vw, 2rem);
+      font-weight: 300;
+      color: var(--bark);
+      max-width: 680px;
+      margin: 0 auto;
+      line-height: 1.5;
+    }
+
+    .pullquote cite {
+      display: block;
+      margin-top: 1.2rem;
+      font-family: 'Jost', sans-serif;
+      font-style: normal;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
-      opacity: 0.8;
       color: var(--clay);
     }
 
-    /* Progress indicators */
-    .progress-wrap {
-      position: fixed;
-      right: 5vw;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 1000;
+    /* ── Footer ── (adjustable vertical padding) */
+    footer {
+      padding: var(--footer-padding-v) 5vw;
       display: flex;
-      flex-direction: column;
-      gap: 20px;
+      justify-content: space-between;
       align-items: center;
+      border-top: 1px solid var(--fog);
     }
 
-    .dot {
-      width: 6px;
-      height: 6px;
-      background: var(--cream);
-      border-radius: 50%;
-      opacity: 0.3;
-      transition: all 0.3s ease;
-    }
-
-    /* Scroll prompt */
-    .scroll-down {
-      position: fixed;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 100;
-      font-size: 0.7rem;
-      letter-spacing: 0.4em;
-      text-transform: uppercase;
+    .footer-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      color: var(--umber);
       opacity: 0.6;
-      pointer-events: none;
     }
 
-    @media (max-width: 768px) {
-      nav { padding: 1.5rem 4vw; }
-      .nav-links { gap: 1.5rem; }
-      .progress-wrap { right: 4vw; gap: 16px; }
+    .footer-note {
+      font-size: 0.75rem;
+      color: var(--clay);
+      opacity: 0.7;
+    }
+
+    /* ── Scroll reveal ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.9s cubic-bezier(0.16,1,0.3,1), transform 0.9s cubic-bezier(0.16,1,0.3,1);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 700px) {
+      #about {
+        grid-template-columns: 1fr;
+        min-height: auto;
+      }
+
+      .about-visual {
+        aspect-ratio: 4/3;
+        order: -1;
+      }
+
+      .features {
+        flex-direction: column;
+      }
+
+      .feature {
+        border-right: none;
+        border-bottom: 1px solid var(--fog);
+      }
+
+      .feature:last-child {
+        border-bottom: none;
+      }
+
+      footer {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
     }
   </style>
 </head>
 <body>
+
   <nav>
-    <a href="index.html" class="nav-logo">Mudpies Studio</a>
+    <a href="#" class="nav-logo" style="display:flex; align-items:center; gap:10px;">
+      <img src="./logo.png" alt="Mudpies logo" style="width:1in; height:1in; object-fit:contain;">
+      <span>Mudpies</span>
+    </a>
     <ul class="nav-links">
-      <li><a href="index.html">Collection</a></li>
-      <li><a href="process.html" style="border-bottom: 1px solid var(--cream);">The Process</a></li>
+      <li><a href="./index.html">Collection</a></li>
+      <li><a href="./process.html">The Process</a></li>
+      <li><a href="#about">About</a></li>
     </ul>
   </nav>
 
-  <div class="scroll-down">Scroll to dig deeper</div>
-
-  <div class="progress-wrap">
-    <div class="dot"></div>
-    <div class="dot"></div>
-    <div class="dot"></div>
-    <div class="dot"></div>
-  </div>
-
-  <main class="viewport">
-    <!-- Stage 1: Extraction -->
-    <section class="section" id="stage1">
-      <div class="bg-image" style="background-image: url('https://images.unsplash.com/photo-1590133322383-217565bc9921?q=80&w=2070&auto=format&fit=crop');"></div>
-      <div class="content">
-        <p>I. Extraction</p>
-        <h2>The Sift</h2>
-      </div>
-    </section>
-
-    <!-- Stage 2: Hydration -->
-    <section class="section" id="stage2">
-      <div class="bg-image" style="background-image: url('https://images.unsplash.com/photo-1565191999001-551c187427bb?q=80&w=2070&auto=format&fit=crop');"></div>
-      <div class="content">
-        <p>II. Hydration</p>
-        <h2>Living Earth</h2>
-      </div>
-    </section>
-
-    <!-- Stage 3: Shaping -->
-    <section class="section" id="stage3">
-      <div class="bg-image" style="background-image: url('https://images.unsplash.com/photo-1459156260736-f07f53898101?q=80&w=2069&auto=format&fit=crop');"></div>
-      <div class="content">
-        <p>III. Composition</p>
-        <h2>Hand Sculpted</h2>
-      </div>
-    </section>
-
-    <!-- Stage 4: Final Object (Refined Soil) — handmade clay pottery image -->
-    <section class="section" id="stage4">
-      <div class="bg-image" style="background-image: url('https://images.unsplash.com/photo-1581783898377-6b2c3c2e0f2a?q=80&w=2070&auto=format&fit=crop');"></div>
-      <div class="content">
-        <p>IV. The Result</p>
-        <h2>Refined Soil</h2>
-        <br><br>
-        <a href="index.html" class="nav-logo" style="border: 1px solid var(--cream); padding: 15px 30px; border-radius: 50px; display: inline-block;">Return to Collection</a>
-      </div>
-    </section>
-  </main>
-
-  <script>
-    gsap.registerPlugin(ScrollTrigger);
-
-    const sections = gsap.utils.toArray(".section");
-    const dots = gsap.utils.toArray(".dot");
-    const bgImages = gsap.utils.toArray(".bg-image");
-    const numSections = sections.length;
-
-    // Initial state for first section
-    gsap.set(sections[0], { autoAlpha: 1, visibility: "visible" });
-    gsap.set(dots[0], { opacity: 1, scale: 1.5 });
-
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: ".viewport",
-        start: "top top",
-        end: `+=${(numSections - 1) * 300}vh`,
-        scrub: 1.5,
-        pin: true,
-        pinSpacing: true,
-        snap: {
-          snapTo: 1 / (numSections - 1),
-          duration: 0.4,
-          ease: "power1.inOut"
-        }
-      }
-    });
-
-    // Build timeline for each transition
-    sections.forEach((section, i) => {
-      if (i > 0) {
-        const prevSection = sections[i - 1];
-        const prevBg = prevSection.querySelector(".bg-image");
-        const prevContent = prevSection.querySelector(".content");
-
-        const position = i;
-
-        // Zoom-in + fade previous background
-        tl.to(prevBg, {
-          scale: 4,
-          opacity: 0,
-          duration: 1.5,
-          ease: "power2.in"
-        }, position);
-
-        // Zoom-out previous content
-        tl.to(prevContent, {
-          scale: 0.8,
-          opacity: 0,
-          duration: 1,
-          ease: "power2.in"
-        }, position);
-
-        // Fade in current section
-        tl.to(section, {
-          autoAlpha: 1,
-          visibility: "visible",
-          duration: 1
-        }, position + 0.5);
-
-        // Update progress dots
-        tl.to(dots[i - 1], { opacity: 0.3, scale: 1 }, position + 0.5);
-        tl.to(dots[i], { opacity: 1, scale: 1.5 }, position + 0.5);
-      }
-    });
-
-    // Subtle parallax on active background only
-    let currentIndex = 0;
-    window.addEventListener("mousemove", (e) => {
-      const x = (e.clientX / window.innerWidth - 0.5) * 20;
-      const y = (e.clientY / window.innerHeight - 0.5) * 20;
-      
-      if (bgImages[currentIndex]) {
-        gsap.to(bgImages[currentIndex], { 
-          x: x, 
-          y: y, 
-          duration: 1.2, 
-          ease: "power2.out",
-          overwrite: "auto"
-        });
-      }
-    });
-
-    // Track current section for parallax
-    ScrollTrigger.create({
-      trigger: ".viewport",
-      start: "top top",
-      end: "bottom bottom",
-      onUpdate: (self) => {
-        const progress = self.progress;
-        currentIndex = Math.round(progress * (sections.length - 1));
-      }
-    });
-  </script>
-</body>
-</html>
+  <main>
+    <!-- Hero: Soil / Earth intro (SIFT sand‑dunes background) -->
+    <div class="hero" style="display:flex; align-items:center; justify-content:center; gap:6vw; max-width:1100px; margin:0 auto;">
+      <!-- LEFT: TEXT -->
+      <div style="flex:1; display:flex;
