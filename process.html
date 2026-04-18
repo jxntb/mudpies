@@ -4,48 +4,47 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>MudPies</title>
+  <meta name="description" content="MudPies — handcrafted ceramics and earthy design.">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+
   <style>
-    /* ── TUNABLE VARIABLES AT THE TOP ──────────────────────────── */
-    /* Adjust these to control vertical spacing and scroll thresholds */
-
-    /* 1. Page padding “breathing room” per section */
     :root {
-      --cream:        #F5F0E8;
-      --parchment:    #EDE5D4;
-      --sand:         #D9C9A8;
-      --clay:         #B8926A;
-      --terracotta:   #A0614A;
-      --umber:        #6B4A32;
-      --bark:         #3E2A1A;
-      --sage:         #8A9A7A;
-      --moss:         #5C6E50;
-      --fog:          rgba(62,42,26,0.08);
+      --cream: #F5F0E8;
+      --parchment: #EDE5D4;
+      --sand: #D9C9A8;
+      --clay: #B8926A;
+      --terracotta: #A0614A;
+      --umber: #6B4A32;
+      --bark: #3E2A1A;
+      --sage: #8A9A7A;
+      --moss: #5C6E50;
+      --fog: rgba(62, 42, 26, 0.08);
+      --overlay-dark: rgba(28, 18, 10, 0.42);
+      --overlay-soft: rgba(245, 240, 232, 0.72);
 
-      /* Hero section vertical padding (top/bottom) */
       --hero-padding-v: 9vh;
-
-      /* About section padding (top/bottom) */
       --about-padding-v: 8vh;
-
-      /* Divider margin (top/bottom) */
       --divider-margin-v: 6vh;
-
-      /* Pullquote section padding */
       --pullquote-padding-v: 7vh;
-
-      /* Footer padding */
       --footer-padding-v: 3rem;
+      --content-max: 1100px;
+      --section-pad-x: 5vw;
     }
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
 
-    html { scroll-behavior: smooth; }
+    html {
+      scroll-behavior: smooth;
+    }
 
     body {
-      background-color: var(--cream);
+      margin: 0;
+      background: var(--cream);
       color: var(--bark);
       font-family: 'Jost', sans-serif;
       font-weight: 300;
@@ -55,7 +54,6 @@
       overflow-x: hidden;
     }
 
-    /* ── Grain overlay ── */
     body::before {
       content: '';
       position: fixed;
@@ -66,15 +64,41 @@
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
     }
 
-    /* ── Nav ── */
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .skip-link {
+      position: absolute;
+      left: -999px;
+      top: 0;
+    }
+
+    .skip-link:focus {
+      left: 1rem;
+      top: 1rem;
+      z-index: 200;
+      background: var(--parchment);
+      color: var(--bark);
+      padding: 0.75rem 1rem;
+      border-radius: 999px;
+      text-decoration: none;
+    }
+
     nav {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 2rem 5vw;
+      gap: 2rem;
+      padding: 1.25rem var(--section-pad-x);
       position: sticky;
       top: 0;
-      z-index: 10;
+      z-index: 50;
       background: rgba(245, 240, 232, 0.88);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
@@ -82,18 +106,36 @@
     }
 
     .nav-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      min-width: 0;
+    }
+
+    .nav-logo img {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+      flex: none;
+    }
+
+    .nav-logo span {
       font-family: 'Cormorant Garamond', serif;
       font-size: 1.5rem;
       font-weight: 400;
       letter-spacing: 0.12em;
       color: var(--umber);
-      text-decoration: none;
     }
 
     .nav-links {
       display: flex;
-      gap: 2.5rem;
+      gap: 2rem;
       list-style: none;
+      margin: 0;
+      padding: 0;
+      flex-wrap: wrap;
+      justify-content: flex-end;
     }
 
     .nav-links a {
@@ -102,48 +144,66 @@
       text-transform: uppercase;
       text-decoration: none;
       color: var(--umber);
-      opacity: 0.7;
-      transition: opacity 0.3s;
+      opacity: 0.72;
+      transition: opacity 0.25s ease;
     }
 
-    .nav-links a:hover { opacity: 1; }
+    .nav-links a:hover,
+    .nav-links a:focus-visible {
+      opacity: 1;
+    }
 
-    /* ── Hero ── (SIFT / sand‑dunes background) */
+    .hero,
+    .features,
+    .divider,
+    #about,
+    .pullquote,
+    footer {
+      position: relative;
+    }
+
     .hero {
-      /* Uses: images.wallpaperscraft.com sand dunes / stones */
-      background: url('https://images.wallpaperscraft.com/image/single/sand_dunes_stones_1240621_1280x720.jpg') center/cover;
-      padding: var(--hero-padding-v) 5vw;   /* ← Change spacing here */
-      max-width: 1100px;
+      max-width: var(--content-max);
       margin: 0 auto;
-      color: white;  /* white text on dark image */
-      text-shadow: 0 0 8px rgba(0,0,0,0.5);
-      animation: fadeUp 1.1s cubic-bezier(0.16,1,0.3,1) both;
+      padding: var(--hero-padding-v) var(--section-pad-x);
+      min-height: calc(100vh - 84px);
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 4vw;
+      align-items: center;
+      color: var(--bark);
+      animation: fadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
     }
 
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(28px); }
-      to   { opacity: 1; transform: translateY(0); }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0 var(--section-pad-x);
+      border-radius: 32px;
+      background:
+        linear-gradient(135deg, rgba(245, 240, 232, 0.88), rgba(245, 240, 232, 0.64)),
+        url('https://images.wallpaperscraft.com/image/single/sand_dunes_stones_1240621_1280x720.jpg') center/cover;
+      z-index: -1;
+      box-shadow: 0 24px 60px rgba(62, 42, 26, 0.08);
     }
 
     .eyebrow {
-      font-size: 0.7rem;
+      font-size: 0.72rem;
       letter-spacing: 0.28em;
       text-transform: uppercase;
       color: var(--terracotta);
-      margin-bottom: 1.5rem;
-      animation: fadeUp 1.1s 0.1s cubic-bezier(0.16,1,0.3,1) both;
+      margin-bottom: 1.25rem;
     }
 
     h1 {
       font-family: 'Cormorant Garamond', serif;
       font-size: clamp(2.8rem, 6vw, 5.2rem);
       font-weight: 300;
-      line-height: 1.08;
+      line-height: 1.05;
       letter-spacing: -0.01em;
       color: var(--bark);
-      max-width: 780px;
-      margin-bottom: 2rem;
-      animation: fadeUp 1.1s 0.18s cubic-bezier(0.16,1,0.3,1) both;
+      max-width: 14ch;
+      margin: 0 0 1.5rem;
     }
 
     h1 em {
@@ -155,91 +215,132 @@
       font-size: 1.05rem;
       font-weight: 300;
       color: var(--umber);
-      max-width: 500px;
-      line-height: 1.85;
-      margin-bottom: 3rem;
-      animation: fadeUp 1.1s 0.26s cubic-bezier(0.16,1,0.3,1) both;
+      max-width: 34rem;
+      line-height: 1.9;
+      margin: 0 0 2rem;
     }
 
-    /* ── Buttons ── */
     .buttons {
       display: flex;
       gap: 1rem;
       flex-wrap: wrap;
-      animation: fadeUp 1.1s 0.34s cubic-bezier(0.16,1,0.3,1) both;
+      align-items: center;
     }
 
-    .btn-primary {
-      display: inline-block;
-      padding: 0.9rem 2.2rem;
-      background: var(--umber);
-      color: var(--parchment);
-      font-family: 'Jost', sans-serif;
+    .btn-primary,
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 0.9rem 2rem;
+      border-radius: 999px;
       font-size: 0.75rem;
-      font-weight: 400;
+      font-weight: 500;
       letter-spacing: 0.18em;
       text-transform: uppercase;
       text-decoration: none;
-      border-radius: 60px;
-      transition: background 0.35s, transform 0.2s;
+      transition: transform 0.2s ease, background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+      white-space: nowrap;
     }
 
-    .btn-primary:hover {
+    .btn-primary {
+      background: var(--umber);
+      color: var(--parchment);
+      border: 1px solid var(--umber);
+    }
+
+    .btn-primary:hover,
+    .btn-primary:focus-visible {
       background: var(--bark);
+      border-color: var(--bark);
       transform: translateY(-1px);
     }
 
     .btn-ghost {
-      display: inline-block;
-      padding: 0.9rem 2.2rem;
       background: transparent;
       color: var(--umber);
-      font-family: 'Jost', sans-serif;
-      font-size: 0.75rem;
-      font-weight: 400;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      text-decoration: none;
-      border-radius: 60px;
       border: 1px solid var(--clay);
-      transition: background 0.3s, border-color 0.3s, transform 0.2s;
     }
 
-    .btn-ghost:hover {
+    .btn-ghost:hover,
+    .btn-ghost:focus-visible {
       background: var(--fog);
       border-color: var(--umber);
       transform: translateY(-1px);
     }
 
-    /* ── Divider ── (adjustable vertical margin) */
+    .hero-panel {
+      align-self: stretch;
+      min-height: 420px;
+      border-radius: 32px;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(62, 42, 26, 0.10), rgba(62, 42, 26, 0.25)),
+        url('https://images.unsplash.com/photo-1771523350747-638a89667c8f?q=80&w=774&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') center/cover;
+      box-shadow: 0 24px 60px rgba(62, 42, 26, 0.12);
+      display: flex;
+      align-items: flex-end;
+      padding: 1.5rem;
+    }
+
+    .hero-card {
+      background: rgba(245, 240, 232, 0.78);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(62, 42, 26, 0.08);
+      border-radius: 24px;
+      padding: 1.25rem 1.25rem 1rem;
+      max-width: 18rem;
+      color: var(--bark);
+    }
+
+    .hero-card .kicker {
+      display: block;
+      font-size: 0.68rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--terracotta);
+      margin-bottom: 0.65rem;
+    }
+
+    .hero-card p {
+      margin: 0;
+      font-size: 0.92rem;
+      line-height: 1.75;
+      color: var(--umber);
+    }
+
     .divider {
       height: 1px;
       background: linear-gradient(to right, transparent, var(--sand), transparent);
-      margin: var(--divider-margin-v) 5vw;
-      opacity: 0.6;
+      margin: var(--divider-margin-v) var(--section-pad-x);
+      opacity: 0.7;
     }
 
-    /* ── Feature strip ── */
     .features {
+      max-width: var(--content-max);
+      margin: 0 auto;
       display: flex;
-      gap: 0;
-      padding: 3rem 5vw 4rem; /* ↑ increase if you want more scroll space after features */
+      padding: 2.5rem var(--section-pad-x) 3.5rem;
       border-top: 1px solid var(--fog);
       border-bottom: 1px solid var(--fog);
-      animation: fadeUp 1.2s 0.5s cubic-bezier(0.16,1,0.3,1) both;
+      animation: fadeUp 1.0s 0.08s cubic-bezier(0.16, 1, 0.3, 1) both;
     }
 
     .feature {
       flex: 1;
-      padding: 2.2rem 2rem;
+      padding: 1.8rem 1.4rem;
       border-right: 1px solid var(--fog);
     }
 
-    .feature:last-child { border-right: none; }
+    .feature:last-child {
+      border-right: none;
+    }
 
     .feature-icon {
-      width: 32px;
-      height: 32px;
+      width: 34px;
+      height: 34px;
       margin-bottom: 1rem;
       color: var(--terracotta);
     }
@@ -249,99 +350,109 @@
       font-size: 1.15rem;
       font-weight: 400;
       color: var(--umber);
-      margin-bottom: 0.4rem;
+      margin: 0 0 0.4rem;
     }
 
     .feature p {
-      font-size: 0.85rem;
+      margin: 0;
+      font-size: 0.9rem;
       color: var(--clay);
-      line-height: 1.7;
+      line-height: 1.75;
     }
 
-    /* ── About section (HAND SCULPTED / zoomed in hand image) */
     #about {
-      /* Uses: zoomed in, hand‑with‑clay style */
-      background: url('https://images.unsplash.com/photo-1771523350747-638a89667c8f?q=80&w=774&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') center/cover;
-      padding: var(--about-padding-v) 5vw;  /* ← Change spacing here */
+      max-width: var(--content-max);
+      margin: 0 auto;
+      padding: var(--about-padding-v) var(--section-pad-x);
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 6vw;
+      gap: 5vw;
       align-items: center;
-      color: white;
-      text-shadow: 0 0 8px rgba(0,0,0,0.6);
-      /* Keep this section taller so scrolling is smoother */
-      min-height: 110vh;  /* ← Control “how much scroll” this section takes */
+      min-height: 90vh;
+    }
+
+    .about-copy {
+      position: relative;
+      z-index: 1;
     }
 
     .about-label {
-      font-size: 0.65rem;
+      font-size: 0.68rem;
       letter-spacing: 0.28em;
       text-transform: uppercase;
       color: var(--terracotta);
-      margin-bottom: 1.2rem;
+      margin-bottom: 1.1rem;
     }
 
     h2 {
       font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(2rem, 3.5vw, 3rem);
+      font-size: clamp(2rem, 3.5vw, 3.2rem);
       font-weight: 300;
       color: var(--bark);
       line-height: 1.15;
-      margin-bottom: 1.5rem;
+      margin: 0 0 1.2rem;
+      max-width: 14ch;
     }
 
     .about-text {
       font-size: 1rem;
       color: var(--umber);
-      line-height: 1.9;
+      line-height: 1.95;
+      max-width: 42rem;
     }
 
-    /* ── Decorative swatch blob ── */
     .about-visual {
       position: relative;
-      aspect-ratio: 3/4;
+      aspect-ratio: 3 / 4;
       border-radius: 48% 52% 44% 56% / 52% 44% 56% 48%;
       overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(28, 18, 10, 0.10), rgba(28, 18, 10, 0.30)),
+        url('https://images.unsplash.com/photo-1690322679888-cc449aa1e0d9?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') center/cover;
+      box-shadow: 0 24px 60px rgba(62, 42, 26, 0.10);
     }
 
     .swatch-text {
       position: absolute;
-      bottom: 2rem;
+      bottom: 1.4rem;
       left: 50%;
       transform: translateX(-50%);
       font-family: 'Cormorant Garamond', serif;
       font-style: italic;
-      font-size: 1.1rem;
-      color: var(--umber);
-      opacity: 0.7;
+      font-size: 1.05rem;
+      color: var(--parchment);
+      opacity: 0.92;
       white-space: nowrap;
+      text-shadow: 0 1px 10px rgba(0, 0, 0, 0.35);
     }
 
-    /* ── Pull quote (REFINED SOIL background) */
     .pullquote {
-      /* Uses: refined soil / studio‑style clay */
-      background: url('https://images.unsplash.com/photo-1690322679888-cc449aa1e0d9?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') center/cover;
-      padding: var(--pullquote-padding-v) 5vw; /* ↑ adjust spacing */
+      max-width: var(--content-max);
+      margin: 0 auto;
+      padding: var(--pullquote-padding-v) var(--section-pad-x);
+      border-radius: 32px;
+      overflow: hidden;
       text-align: center;
-      color: white;
-      text-shadow: 0 0 8px rgba(0,0,0,0.6);
-      border: none;
+      background:
+        linear-gradient(rgba(245, 240, 232, 0.70), rgba(245, 240, 232, 0.60)),
+        url('https://images.unsplash.com/photo-1690322679888-cc449aa1e0d9?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') center/cover;
+      box-shadow: 0 24px 60px rgba(62, 42, 26, 0.08);
     }
 
     .pullquote blockquote {
       font-family: 'Cormorant Garamond', serif;
       font-style: italic;
-      font-size: clamp(1.4rem, 2.5vw, 2rem);
+      font-size: clamp(1.4rem, 2.5vw, 2.1rem);
       font-weight: 300;
       color: var(--bark);
-      max-width: 680px;
+      max-width: 42rem;
       margin: 0 auto;
       line-height: 1.5;
     }
 
     .pullquote cite {
       display: block;
-      margin-top: 1.2rem;
+      margin-top: 1.1rem;
       font-family: 'Jost', sans-serif;
       font-style: normal;
       font-size: 0.72rem;
@@ -350,12 +461,14 @@
       color: var(--clay);
     }
 
-    /* ── Footer ── (adjustable vertical padding) */
     footer {
-      padding: var(--footer-padding-v) 5vw;
+      max-width: var(--content-max);
+      margin: 0 auto;
+      padding: var(--footer-padding-v) var(--section-pad-x);
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 1rem;
       border-top: 1px solid var(--fog);
     }
 
@@ -363,20 +476,21 @@
       font-family: 'Cormorant Garamond', serif;
       font-size: 1.1rem;
       color: var(--umber);
-      opacity: 0.6;
+      opacity: 0.72;
     }
 
     .footer-note {
       font-size: 0.75rem;
       color: var(--clay);
-      opacity: 0.7;
+      opacity: 0.84;
+      text-align: right;
     }
 
-    /* ── Scroll reveal ── */
     .reveal {
       opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.9s cubic-bezier(0.16,1,0.3,1), transform 0.9s cubic-bezier(0.16,1,0.3,1);
+      transform: translateY(18px);
+      transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: opacity, transform;
     }
 
     .reveal.visible {
@@ -384,16 +498,35 @@
       transform: translateY(0);
     }
 
-    /* ── Responsive ── */
-    @media (max-width: 700px) {
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(28px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: 1fr;
+        min-height: auto;
+      }
+
+      .hero-panel {
+        min-height: 340px;
+      }
+
       #about {
         grid-template-columns: 1fr;
         min-height: auto;
       }
 
       .about-visual {
-        aspect-ratio: 4/3;
         order: -1;
+        aspect-ratio: 4 / 3;
       }
 
       .features {
@@ -408,22 +541,62 @@
       .feature:last-child {
         border-bottom: none;
       }
+    }
+
+    @media (max-width: 700px) {
+      nav {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .nav-links {
+        width: 100%;
+        justify-content: flex-start;
+        gap: 1.25rem;
+      }
+
+      .hero::before {
+        inset: 0 1rem;
+      }
 
       footer {
         flex-direction: column;
-        gap: 1rem;
-        text-align: center;
+        align-items: flex-start;
+      }
+
+      .footer-note {
+        text-align: left;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+
+      .reveal {
+        opacity: 1;
+        transform: none;
       }
     }
   </style>
 </head>
 <body>
+  <a class="skip-link" href="#main">Skip to content</a>
 
-  <nav>
-    <a href="#" class="nav-logo" style="display:flex; align-items:center; gap:10px;">
-      <img src="./logo.png" alt="Mudpies logo" style="width:1in; height:1in; object-fit:contain;">
-      <span>Mudpies</span>
+  <nav aria-label="Primary">
+    <a href="#" class="nav-logo">
+      <img src="./logo.png" alt="MudPies logo">
+      <span>MudPies</span>
     </a>
+
     <ul class="nav-links">
       <li><a href="./index.html">Collection</a></li>
       <li><a href="./process.html">The Process</a></li>
@@ -431,8 +604,112 @@
     </ul>
   </nav>
 
-  <main>
-    <!-- Hero: Soil / Earth intro (SIFT sand‑dunes background) -->
-    <div class="hero" style="display:flex; align-items:center; justify-content:center; gap:6vw; max-width:1100px; margin:0 auto;">
-      <!-- LEFT: TEXT -->
-      <div style="flex:1; display:flex;
+  <main id="main">
+    <section class="hero reveal" aria-labelledby="hero-title">
+      <div>
+        <p class="eyebrow">Handmade ceramics</p>
+        <h1 id="hero-title">Objects shaped by <em>soil, water, and time</em>.</h1>
+        <p class="lede">
+          MudPies is a quiet collection of tactile forms, earthy glazes, and hand-built pieces
+          designed to feel grounded in the home and gentle in the hand.
+        </p>
+
+        <div class="buttons">
+          <a class="btn-primary" href="./index.html">View Collection</a>
+          <a class="btn-ghost" href="./process.html">Read the Process</a>
+        </div>
+      </div>
+
+      <div class="hero-panel" aria-hidden="true">
+        <div class="hero-card">
+          <span class="kicker">Studio note</span>
+          <p>
+            Slow-fired surfaces, natural variation, and forms that keep their edges soft.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="features" aria-label="Highlights">
+      <article class="feature reveal">
+        <svg class="feature-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 3c2.5 2.2 4 4.8 4 7.4 0 3.4-2.5 6.1-4 10.6-1.5-4.5-4-7.2-4-10.6C8 7.8 9.5 5.2 12 3Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+        </svg>
+        <h3>Natural materials</h3>
+        <p>Clay-led forms with finishes that keep the hand and eye close to the surface.</p>
+      </article>
+
+      <article class="feature reveal">
+        <svg class="feature-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M6 18c2-7 4-10 6-12 2 2 4 5 6 12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          <path d="M9 13h6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+        <h3>Slow process</h3>
+        <p>Built, refined, and fired in small runs so each piece keeps its own variation.</p>
+      </article>
+
+      <article class="feature reveal">
+        <svg class="feature-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 12h16M12 4v16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+        <h3>Functional pieces</h3>
+        <p>Designed for daily use, with proportions that balance utility and calm presence.</p>
+      </article>
+    </section>
+
+    <div class="divider" aria-hidden="true"></div>
+
+    <section id="about" aria-labelledby="about-title">
+      <div class="about-copy reveal">
+        <p class="about-label">About the studio</p>
+        <h2 id="about-title">Quiet objects with an honest surface.</h2>
+        <p class="about-text">
+          Each vessel begins as a simple form and changes through touch, drying, and fire.
+          The result is a collection that favors restraint over ornament, texture over polish,
+          and a visible connection to the making process.
+        </p>
+      </div>
+
+      <div class="about-visual reveal" aria-hidden="true">
+        <div class="swatch-text">Made by hand</div>
+      </div>
+    </section>
+
+    <section class="pullquote reveal" aria-label="Quote">
+      <blockquote>
+        “A small object can hold a great deal of time, if it is made slowly enough.”
+        <cite>MudPies studio note</cite>
+      </blockquote>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-logo">MudPies</div>
+    <div class="footer-note">
+      Handmade ceramics · Small-batch work · Studio collection
+    </div>
+  </footer>
+
+  <script>
+    const items = document.querySelectorAll('.reveal');
+
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            obs.unobserve(entry.target);
+          }
+        });
+      }, {
+        threshold: 0.18,
+        rootMargin: '0px 0px -8% 0px'
+      });
+
+      items.forEach(item => observer.observe(item));
+    } else {
+      items.forEach(item => item.classList.add('visible'));
+    }
+  </script>
+</body>
+</html>
