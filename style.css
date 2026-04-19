@@ -70,15 +70,15 @@ p {
 }
 
 .cave-bg {
-  background-image: url('/assets/cave.png');
+  background-image: url('assets/cave.png');
 }
 
 .valley-bg {
-  background-image: url('/assets/valley.png');
+  background-image: url('assets/valley.png');
 }
 
 .mountain-bg {
-  background-image: url('/assets/mountain.png');
+  background-image: url('assets/mountain.png');
 }
 
 .content {
