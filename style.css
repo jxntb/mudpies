@@ -56,6 +56,11 @@ p {
   color: #000000;
 }
 
+.hero h1,
+.hero p {
+  color: inherit;
+}
+
 .background {
   position: absolute;
   top: 0;
