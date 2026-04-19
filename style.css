@@ -1,225 +1,163 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400&display=swap');
-
 :root {
-  --bg:          #F5F0E8;
-  --parchment:   #EDE5D4;
-  --sand:        #D9C9A8;
-  --clay:        #B8926A;
-  --terracotta:  #A0614A;
-  --umber:       #6B4A32;
-  --bark:        #3E2A1A;
-  --sage:        #8A9A7A;
-  --card:        #F0E8D8;
-  --fog:         rgba(62, 42, 26, 0.08);
+  --font-main: 'Outfit', sans-serif;
+  --color-text: #f0f0f0;
+  --color-bg: #0a0a0a;
 }
 
-*, *::before, *::after {
-  box-sizing: border-box;
+* {
   margin: 0;
   padding: 0;
-}
-
-html {
-  scroll-behavior: smooth;
+  box-sizing: border-box;
 }
 
 body {
-  font-family: 'Jost', Georgia, serif;
-  font-weight: 300;
-  background: var(--bg);
-  color: var(--bark);
-  line-height: 1.8;
+  font-family: var(--font-main);
+  background-color: var(--color-bg);
+  color: var(--color-text);
   overflow-x: hidden;
 }
 
-/* Subtle grain texture */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 100;
-  opacity: 0.025;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-}
-
-/* ── Layout ── */
-.wrap {
-  max-width: 860px;
-  margin: 0 auto;
-  padding: 8vh 5vw 10vh;
-  animation: fadeUp 1.1s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(24px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* ── Eyebrow ── */
-.eyebrow {
-  display: inline-block;
-  text-transform: uppercase;
-  letter-spacing: 0.28em;
-  color: var(--terracotta);
-  font-family: 'Jost', sans-serif;
-  font-size: 0.68rem;
-  font-weight: 400;
-  margin-bottom: 1.4rem;
-}
-
-/* ── Headings ── */
 h1 {
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: clamp(2.8rem, 6vw, 5rem);
+  font-size: 5rem;
   font-weight: 300;
-  line-height: 1.08;
-  letter-spacing: -0.01em;
-  color: var(--bark);
-  margin-bottom: 1.5rem;
-}
-
-h1 em {
-  font-style: italic;
-  color: var(--umber);
-}
-
-h2 {
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
-  font-weight: 300;
-  color: var(--bark);
-  line-height: 1.15;
+  letter-spacing: -0.02em;
   margin-bottom: 1rem;
 }
 
-/* ── Body text ── */
-.lede {
-  font-size: 1.05rem;
-  line-height: 1.85;
-  color: var(--umber);
-  max-width: 520px;
-  margin-bottom: 0.5rem;
+h2 {
+  font-size: 3.5rem;
+  font-weight: 300;
+  margin-bottom: 1.5rem;
 }
 
 p {
-  font-size: 1rem;
-  line-height: 1.85;
-  color: var(--umber);
-}
-
-/* ── Buttons ── */
-.buttons {
-  display: flex;
-  gap: 0.85rem;
-  margin: 2.4rem 0 3.5rem;
-  flex-wrap: wrap;
-}
-
-a {
-  text-decoration: none;
-  color: var(--parchment);
-  background: var(--umber);
-  font-family: 'Jost', sans-serif;
-  font-size: 0.72rem;
-  font-weight: 400;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  padding: 0.85rem 2rem;
-  border-radius: 999px;
-  transition: background 0.35s ease, transform 0.2s ease;
-  display: inline-block;
-}
-
-a:hover {
-  background: var(--bark);
-  transform: translateY(-1px);
-}
-
-/* Ghost variant — apply .btn-ghost to the second link */
-a.btn-ghost {
-  background: transparent;
-  color: var(--umber);
-  border: 1px solid var(--clay);
-}
-
-a.btn-ghost:hover {
-  background: var(--fog);
-  border-color: var(--umber);
-}
-
-/* ── Section / card ── */
-section {
-  background: var(--card);
-  padding: 2.5rem;
-  border-radius: 28px;
-  border: 1px solid rgba(184, 146, 106, 0.25);
-  margin-top: 2rem;
-  position: relative;
-  overflow: hidden;
-}
-
-section::before {
-  content: '';
-  position: absolute;
-  top: -40px;
-  right: -40px;
-  width: 180px;
-  height: 180px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(160,97,74,0.08) 0%, transparent 70%);
-  pointer-events: none;
-}
-
-section h2 {
-  margin-bottom: 0.8rem;
-}
-
-/* ── Horizontal rule / divider ── */
-hr {
-  border: none;
-  height: 1px;
-  background: linear-gradient(to right, transparent, var(--sand), transparent);
-  margin: 4vh 0;
-  opacity: 0.6;
-}
-
-/* ── Blockquote ── */
-blockquote {
-  font-family: 'Cormorant Garamond', serif;
-  font-style: italic;
-  font-size: clamp(1.2rem, 2vw, 1.7rem);
+  font-size: 1.25rem;
   font-weight: 300;
-  color: var(--umber);
-  border-left: 2px solid var(--clay);
-  padding: 0.5rem 0 0.5rem 1.5rem;
-  margin: 2rem 0;
-  line-height: 1.5;
+  line-height: 1.6;
+  max-width: 600px;
 }
 
-/* ── Utility: muted label ── */
-.label {
-  font-size: 0.65rem;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: var(--terracotta);
-  margin-bottom: 0.8rem;
-  display: block;
+.section {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* ── Responsive ── */
-@media (max-width: 600px) {
-  .wrap {
-    padding: 6vh 6vw 8vh;
-  }
+.hero {
+  background-color: #050505;
+  text-align: center;
+  background-image: url('https://images.wallpaperscraft.com/image/single/sand_dunes_stones_1240621_1280x720.jpg');
+  background-size: cover;
+  background-position: center;
+  color: #000000;
+}
 
-  .buttons {
-    flex-direction: column;
-    align-items: flex-start;
-  }
+.background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  z-index: 0;
+  /* Dark overlay for text readability */
+  filter: brightness(0.6);
+}
 
-  section {
-    padding: 1.6rem;
-    border-radius: 20px;
-  }
+.cave-bg {
+  background-image: url('/assets/cave.png');
+}
+
+.valley-bg {
+  background-image: url('/assets/valley.png');
+}
+
+.mountain-bg {
+  background-image: url('/assets/mountain.png');
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 4rem;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.text-block {
+  opacity: 0;
+  transform: translateY(50px);
+}
+
+.text-block.left {
+  text-align: left;
+}
+
+.text-block.right {
+  text-align: right;
+  margin-left: auto;
+}
+
+.text-block.center {
+  text-align: center;
+  margin: 0 auto;
+}
+
+.text-block.center p {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.object-display {
+  flex-shrink: 0;
+  width: 40vw;
+  display: flex;
+  justify-content: center;
+}
+
+.soil-object {
+  width: 100%;
+  max-width: 500px;
+  object-fit: cover;
+  border-radius: 20px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+.final-object {
+  max-width: 700px;
+  border-radius: 50%;
+}
+
+.horizontal-scroll {
+  flex-direction: row;
+  justify-content: flex-start;
+  width: 300vw; /* 3 screens wide */
+  gap: 10vw;
+  padding: 0 10vw;
+}
+
+.horizontal-scroll .text-block {
+  width: 80vw;
+}
+
+.footer {
+  background-color: #050505;
+  height: 50vh;
 }
