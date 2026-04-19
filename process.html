@@ -1,192 +1,85 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>MudPies — Process</title>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=Jost:wght@300;400&display=swap" rel="stylesheet">
-
-<style>
-* { margin:0; padding:0; box-sizing:border-box; }
-
-:root {
-  --cream:#F5F0E8;
-  --umber:#6B4A32;
-  --fog:rgba(62,42,26,0.08);
-}
-
-body {
-  font-family:'Jost', sans-serif;
-  background:black;
-  overflow-x:hidden;
-}
-
-/* NAV */
-nav {
-  position:fixed;
-  top:0;
-  width:100%;
-  z-index:10;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:2rem 5vw;
-  background:rgba(245,240,232,0.85);
-  backdrop-filter:blur(10px);
-}
-
-.nav-logo {
-  display:flex;
-  align-items:center;
-  gap:10px;
-  text-decoration:none;
-}
-
-.nav-logo img { width:50px; }
-
-.nav-logo span {
-  font-family:'Cormorant Garamond', serif;
-  color:var(--umber);
-  font-size:1.4rem;
-}
-
-.nav-links {
-  display:flex;
-  gap:2rem;
-  list-style:none;
-}
-
-.nav-links a {
-  text-decoration:none;
-  font-size:0.75rem;
-  letter-spacing:0.18em;
-  text-transform:uppercase;
-  color:var(--umber);
-  opacity:0.7;
-}
-
-/* SCROLL HEIGHT (controls duration of experience) */
-.scroll-container {
-  height:400vh;
-}
-
-/* FIXED STAGE */
-.stage {
-  position:fixed;
-  inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  overflow:hidden;
-}
-
-/* BACKGROUNDS */
-.bg {
-  position:absolute;
-  inset:0;
-  background-size:cover;
-  background-position:center;
-  opacity:0;
-  transition:opacity 0.8s ease;
-}
-
-.bg.active {
-  opacity:1;
-}
-
-.bg::after {
-  content:'';
-  position:absolute;
-  inset:0;
-  background:rgba(0,0,0,0.45);
-}
-
-/* TEXT */
-.text {
-  position:absolute;
-  inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:2;
-  color:white;
-  text-align:center;
-
-  opacity:0;
-  transition:opacity 0.5s ease;
-}
-
-.text.active {
-  opacity:1;
-}
-
-h1 {
-  font-family:'Cormorant Garamond', serif;
-  font-size:clamp(2.5rem,5vw,4.5rem);
-  font-weight:300;
-  white-space: nowrap;
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Refined Soil Objects | A Journey</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 
 <body>
+  <div id="app">
+    <!-- Welcome Screen -->
+    <section class="section hero">
+      <div class="content">
+        <h1>The Craft of Soil</h1>
+        <p>Scroll to begin the journey</p>
+      </div>
+    </section>
 
-<nav>
-  <a href="./index.html" class="nav-logo">
-    <img src="./logo.png">
-    <span>Mudpies</span>
-  </a>
-  <ul class="nav-links">
-    <li><a href="./index.html">Collection</a></li>
-    <li><a href="./process.html">The Process</a></li>
-  </ul>
-</nav>
+    <!-- Cave Section -->
+    <section class="section section-cave" id="cave">
+      <div class="background cave-bg"></div>
+      <div class="content container">
+        <div class="text-block left">
+          <h2>The Deep Earth</h2>
+          <p>We begin in the darkness. Rich, ancient soil lies dormant, waiting to be discovered. The raw material of
+            our craft.</p>
+        </div>
+        <div class="object-display">
+          <img src="photo1.png" alt="Raw Rocks" class="soil-object" />
+        </div>
+      </div>
+    </section>
 
-<div class="scroll-container"></div>
+    <!-- Clay Valley Section -->
+    <section class="section section-valley" id="valley">
+      <div class="background valley-bg"></div>
+      <div class="content container horizontal-scroll">
+        <div class="text-block center">
+          <h2>The Terracotta Expanse</h2>
+          <p>Emerging into the light, we find the clay valleys. Here, the earth is warm, pliable, and rich with color.
+          </p>
+        </div>
+        <div class="text-block center">
+          <h2>Refinement</h2>
+          <p>Water and hands work in harmony. The soil is purified, shaped, and smoothed. The transformation begins.</p>
+        </div>
+        <div class="object-display large">
+          <img src="photo2.png" alt="Hands Working Clay" class="soil-object" />
+        </div>
+      </div>
+    </section>
 
-<div class="stage">
+    <!-- Rocky Mountain Section -->
+    <section class="section section-mountain" id="mountain">
+      <div class="background mountain-bg"></div>
+      <div class="content container">
+        <div class="text-block center">
+          <h2>The Final Form</h2>
+          <p>Elevated, pure, and perfected. The refined soil object rests against the stark beauty of the peaks. A
+            testament to nature's material.</p>
+        </div>
+        <div class="object-display final">
+          <img src="photo3.png" alt="Final Perfected Object" class="soil-object final-object" />
+        </div>
+      </div>
+    </section>
 
-  <!-- BACKGROUNDS -->
-  <div class="bg" id="bg1" style="background-image:url('https://images.wallpaperscraft.com/image/single/sand_dunes_stones_1240621_1280x720.jpg')"></div>
-  <div class="bg" id="bg2" style="background-image:url('https://w0.peakpx.com/wallpaper/13/373/HD-wallpaper-a-wonderful-canadian-lake-forest-sky-lake-mountains.jpg')"></div>
-  <div class="bg" id="bg3" style="background-image:url('https://images.unsplash.com/photo-1771523350747-638a89667c8f?q=80&w=774&auto=format&fit=crop')"></div>
-  <div class="bg" id="bg4" style="background-image:url('https://images.unsplash.com/photo-1690322679888-cc449aa1e0d9?q=80&w=1740&auto=format&fit=crop')"></div>
-
-  <!-- TEXT -->
-  <div class="text" id="t1"><h1>1. The Sift</h1></div>
-  <div class="text" id="t2"><h1>2. Breathing Earth</h1></div>
-  <div class="text" id="t3"><h1>3. Hand Crafted</h1></div>
-  <div class="text" id="t4"><h1>4. Refined Earth</h1></div>
-
-</div>
-
-<script>
-const steps = 4;
-
-function updateScene() {
-  const scroll = window.scrollY;
-  const height = document.body.scrollHeight - window.innerHeight;
-  const progress = scroll / height;
-
-  const index = Math.min(steps - 1, Math.floor(progress * steps));
-
-  // reset all
-  for (let i = 1; i <= steps; i++) {
-    document.getElementById('bg'+i).classList.remove('active');
-    document.getElementById('t'+i).classList.remove('active');
-  }
-
-  // activate current
-  document.getElementById('bg'+(index+1)).classList.add('active');
-  document.getElementById('t'+(index+1)).classList.add('active');
-}
-
-window.addEventListener('scroll', updateScene);
-window.addEventListener('load', updateScene);
-</script>
-
+    <section class="section footer">
+      <div class="content">
+        <h2>Experience the Earth</h2>
+      </div>
+    </section>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="main.js"></script>
 </body>
+
 </html>
