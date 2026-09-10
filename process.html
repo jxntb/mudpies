@@ -1,85 +1,728 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Refined Soil Objects | A Journey</title>
-  <link rel="stylesheet" href="style.css" />
-  <!-- Google Fonts -->
+
+  <title>The Craft of Soil</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Jost:wght@300;400;500&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      background: #17120e;
+      color: #f3eadb;
+    }
+
+    body {
+      font-family: "Jost", sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* ---------------------------------------
+       MAIN SCROLLING EXPERIENCE
+    --------------------------------------- */
+
+    .process {
+      position: relative;
+      height: 550vh;
+    }
+
+    .scene {
+      position: relative;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /*
+      GSAP pins this section while the user scrolls.
+      The video itself does NOT autoplay.
+      Scroll position determines the exact video frame.
+    */
+
+    .scene-inner {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+      background: #17120e;
+    }
+
+    /* ---------------------------------------
+       VIDEO
+    --------------------------------------- */
+
+    .cave-video {
+      position: absolute;
+      inset: 0;
+
+      width: 100%;
+      height: 100%;
+
+      object-fit: cover;
+      object-position: center;
+
+      pointer-events: none;
+      user-select: none;
+
+      /*
+        Prevents the browser from treating this
+        like a normal playable video.
+      */
+      display: block;
+    }
+
+    /* Dark cinematic treatment over the video */
+
+    .video-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+
+      pointer-events: none;
+
+      background:
+        linear-gradient(
+          180deg,
+          rgba(10, 7, 5, 0.35) 0%,
+          rgba(10, 7, 5, 0.08) 35%,
+          rgba(10, 7, 5, 0.12) 60%,
+          rgba(10, 7, 5, 0.55) 100%
+        );
+    }
+
+    /*
+      Subtle vignette keeps attention toward
+      the center of the cave.
+    */
+
+    .vignette {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+
+      pointer-events: none;
+
+      background:
+        radial-gradient(
+          ellipse at center,
+          transparent 35%,
+          rgba(0, 0, 0, 0.18) 70%,
+          rgba(0, 0, 0, 0.55) 100%
+        );
+    }
+
+    /* ---------------------------------------
+       TEXT
+    --------------------------------------- */
+
+    .text-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+
+      pointer-events: none;
+    }
+
+    .text-block {
+      position: absolute;
+
+      width: min(560px, 80vw);
+
+      opacity: 0;
+      visibility: hidden;
+
+      transform: translateY(30px);
+
+      will-change: transform, opacity;
+    }
+
+    .text-block.left {
+      left: 9vw;
+      top: 50%;
+      transform: translateY(calc(-50% + 30px));
+    }
+
+    .text-block.right {
+      right: 9vw;
+      top: 50%;
+      transform: translateY(calc(-50% + 30px));
+    }
+
+    .text-block.center {
+      left: 50%;
+      top: 50%;
+      transform: translate(
+        -50%,
+        calc(-50% + 30px)
+      );
+
+      text-align: center;
+    }
+
+    .eyebrow {
+      margin-bottom: 18px;
+
+      font-family: "Jost", sans-serif;
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+
+      color: rgba(243, 234, 219, 0.72);
+    }
+
+    h1,
+    h2 {
+      margin: 0;
+
+      font-family: "Cormorant Garamond", serif;
+      font-weight: 500;
+      line-height: 0.95;
+      letter-spacing: -0.025em;
+    }
+
+    h1 {
+      font-size: clamp(4rem, 9vw, 9rem);
+    }
+
+    h2 {
+      font-size: clamp(3rem, 6vw, 7rem);
+    }
+
+    .text-block p {
+      max-width: 480px;
+      margin: 24px 0 0;
+
+      font-size: clamp(15px, 1.2vw, 18px);
+      font-weight: 300;
+      line-height: 1.7;
+
+      color: rgba(243, 234, 219, 0.82);
+    }
+
+    .center p {
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* ---------------------------------------
+       INTRO
+    --------------------------------------- */
+
+    .intro {
+      position: absolute;
+      inset: 0;
+
+      z-index: 20;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      text-align: center;
+
+      pointer-events: none;
+    }
+
+    .intro-inner {
+      max-width: 900px;
+      padding: 40px;
+    }
+
+    .intro h1 {
+      text-shadow: 0 4px 40px rgba(0, 0, 0, 0.45);
+    }
+
+    .intro p {
+      margin-top: 28px;
+
+      font-size: 13px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+
+      color: rgba(243, 234, 219, 0.7);
+    }
+
+    /* ---------------------------------------
+       SCROLL INDICATOR
+    --------------------------------------- */
+
+    .scroll-indicator {
+      position: absolute;
+      bottom: 35px;
+      left: 50%;
+
+      z-index: 20;
+
+      transform: translateX(-50%);
+
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+
+      color: rgba(243, 234, 219, 0.6);
+
+      white-space: nowrap;
+    }
+
+    .scroll-line {
+      width: 1px;
+      height: 55px;
+
+      margin: 12px auto 0;
+
+      background: rgba(243, 234, 219, 0.5);
+    }
+
+    /* ---------------------------------------
+       MOBILE
+    --------------------------------------- */
+
+    @media (max-width: 700px) {
+      .process {
+        height: 650vh;
+      }
+
+      .text-block.left,
+      .text-block.right {
+        left: 8vw;
+        right: auto;
+        width: 84vw;
+        top: auto;
+        bottom: 13vh;
+
+        transform: translateY(30px);
+      }
+
+      .text-block.center {
+        width: 84vw;
+      }
+
+      h2 {
+        font-size: clamp(3rem, 15vw, 5rem);
+      }
+
+      .text-block p {
+        font-size: 15px;
+        line-height: 1.6;
+      }
+
+      .intro-inner {
+        padding: 25px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .process {
+        height: 100vh;
+      }
+    }
+  </style>
 </head>
 
 <body>
-  <div id="app">
-    <!-- Welcome Screen -->
-    <section class="section hero">
-      <div class="content">
-        <h1>The Craft of Soil</h1>
-        <p>Scroll to begin the journey</p>
+
+  <main class="process">
+
+    <section class="scene" id="processScene">
+
+      <div class="scene-inner">
+
+        <!-- THE ONLY VISUAL ASSET -->
+        <video
+          id="caveVideo"
+          class="cave-video"
+          src="assets/Cave_walk.mp4"
+          preload="auto"
+          muted
+          playsinline
+          webkit-playsinline
+          disablepictureinpicture
+        ></video>
+
+        <div class="video-overlay"></div>
+        <div class="vignette"></div>
+
+        <!-- ALL TEXT LIVES ABOVE THE VIDEO -->
+        <div class="text-layer">
+
+          <div class="intro">
+            <div class="intro-inner">
+              <div class="eyebrow">MudPies / The Process</div>
+
+              <h1>The Craft of Soil</h1>
+
+              <p>Scroll to enter</p>
+            </div>
+          </div>
+
+          <div class="text-block left text-1">
+            <div class="eyebrow">01 / Origin</div>
+
+            <h2>The Deep Earth</h2>
+
+            <p>
+              We begin in the darkness. Rich, ancient soil lies dormant,
+              waiting to be discovered. The raw material of our craft.
+            </p>
+          </div>
+
+          <div class="text-block right text-2">
+            <div class="eyebrow">02 / Discovery</div>
+
+            <h2>Beneath the Surface</h2>
+
+            <p>
+              Moving deeper into the earth, the material reveals itself.
+              Every layer carries its own texture, weight, and history.
+            </p>
+          </div>
+
+          <div class="text-block left text-3">
+            <div class="eyebrow">03 / Transformation</div>
+
+            <h2>From Earth to Form</h2>
+
+            <p>
+              Water and hands work in harmony. The soil is purified,
+              shaped, and smoothed. The transformation begins.
+            </p>
+          </div>
+
+          <div class="text-block center text-4">
+            <div class="eyebrow">04 / Becoming</div>
+
+            <h2>The Final Form</h2>
+
+            <p>
+              What began beneath the surface emerges as something tangible:
+              a refined object carrying the character of the earth it came from.
+            </p>
+          </div>
+
+        </div>
+
+        <div class="scroll-indicator">
+          Scroll
+          <div class="scroll-line"></div>
+        </div>
+
       </div>
+
     </section>
 
-    <!-- Cave Section -->
-    <section class="section section-cave" id="cave">
-      <div class="background cave-bg"></div>
-      <div class="content container">
-        <div class="text-block left">
-          <h2>The Deep Earth</h2>
-          <p>We begin in the darkness. Rich, ancient soil lies dormant, waiting to be discovered. The raw material of
-            our craft.</p>
-        </div>
-        <div class="object-display">
-          <img src="assets/photo1.png" alt="Raw Rocks" class="soil-object" />
-        </div>
-      </div>
-    </section>
+  </main>
 
-    <!-- Clay Valley Section -->
-    <section class="section section-valley" id="valley">
-      <div class="background valley-bg"></div>
-      <div class="content container horizontal-scroll">
-        <div class="text-block center">
-          <h2>The Terracotta Expanse</h2>
-          <p>Emerging into the light, we find the clay valleys. Here, the earth is warm, pliable, and rich with color.
-          </p>
-        </div>
-        <div class="text-block center">
-          <h2>Refinement</h2>
-          <p>Water and hands work in harmony. The soil is purified, shaped, and smoothed. The transformation begins.</p>
-        </div>
-        <div class="object-display large">
-          <img src="assets/photo2.png" alt="Hands Working Clay" class="soil-object" />
-        </div>
-      </div>
-    </section>
 
-    <!-- Rocky Mountain Section -->
-    <section class="section section-mountain" id="mountain">
-      <div class="background mountain-bg"></div>
-      <div class="content container">
-        <div class="text-block center">
-          <h2>The Final Form</h2>
-          <p>Elevated, pure, and perfected. The refined soil object rests against the stark beauty of the peaks. A
-            testament to nature's material.</p>
-        </div>
-        <div class="object-display final">
-          <img src="assets/photo3.png" alt="Final Perfected Object" class="soil-object final-object" />
-        </div>
-      </div>
-    </section>
-
-    <section class="section footer">
-      <div class="content">
-        <h2>Experience the Earth</h2>
-      </div>
-    </section>
-  </div>
+  <!-- GSAP -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-  <script src="main.js"></script>
-</body>
 
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    const video = document.getElementById("caveVideo");
+    const scene = document.getElementById("processScene");
+
+    const intro = document.querySelector(".intro");
+    const text1 = document.querySelector(".text-1");
+    const text2 = document.querySelector(".text-2");
+    const text3 = document.querySelector(".text-3");
+    const text4 = document.querySelector(".text-4");
+
+    /*
+      --------------------------------------------------
+      VIDEO SCRUBBING
+      --------------------------------------------------
+
+      The video never automatically plays.
+
+      Scroll position:
+        0%   = first frame
+        50%  = middle frame
+        100% = final frame
+
+      Scrolling back up reverses the video automatically.
+    */
+
+    let targetTime = 0;
+    let currentTime = 0;
+
+    video.addEventListener("loadedmetadata", () => {
+
+      ScrollTrigger.create({
+        trigger: scene,
+
+        start: "top top",
+
+        /*
+          The scene remains pinned for 450vh of scrolling.
+          Increase this number for slower, more deliberate motion.
+        */
+        end: "bottom+=450% top",
+
+        pin: true,
+
+        scrub: true,
+
+        anticipatePin: 1,
+
+        onUpdate: (self) => {
+
+          const progress = self.progress;
+
+          /*
+            Convert scroll progress into an exact
+            point in the video.
+          */
+
+          targetTime =
+            progress *
+            Math.max(0, video.duration - 0.05);
+
+        }
+      });
+
+      /*
+        Smoothly move toward the requested video frame.
+        This keeps fast mouse-wheel movements cinematic
+        rather than making the video jump aggressively.
+      */
+
+      function updateVideo() {
+
+        currentTime +=
+          (targetTime - currentTime) * 0.22;
+
+        if (
+          video.readyState >= 2 &&
+          Math.abs(video.currentTime - currentTime) > 0.01
+        ) {
+          video.currentTime = currentTime;
+        }
+
+        requestAnimationFrame(updateVideo);
+      }
+
+      updateVideo();
+
+
+      /*
+        --------------------------------------------------
+        TEXT TIMELINE
+        --------------------------------------------------
+
+        This timeline is controlled by the SAME scroll
+        position as the video.
+
+        Therefore:
+
+          Scroll DOWN
+          → video moves forward
+          → text appears in order
+
+          Scroll UP
+          → video moves backward
+          → text disappears in reverse order
+        --------------------------------------------------
+      */
+
+      const textTimeline = gsap.timeline({
+        scrollTrigger: {
+          trigger: scene,
+
+          start: "top top",
+          end: "bottom+=450% top",
+
+          scrub: true,
+
+          /*
+            Markers can be enabled while developing:
+            markers: true
+          */
+        }
+      });
+
+
+      /*
+        INTRO
+        */
+
+      textTimeline
+        .to(intro, {
+          opacity: 0,
+          duration: 0.08,
+          ease: "none"
+        }, 0.08);
+
+
+      /*
+        TEXT 01
+        */
+
+      textTimeline
+        .set(text1, {
+          visibility: "visible"
+        }, 0.08)
+
+        .to(text1, {
+          opacity: 1,
+          y: 0,
+          duration: 0.06,
+          ease: "power2.out"
+        }, 0.10)
+
+        .to(text1, {
+          opacity: 1,
+          duration: 0.12
+        }, 0.16)
+
+        .to(text1, {
+          opacity: 0,
+          y: -20,
+          duration: 0.06,
+          ease: "power2.in"
+        }, 0.28);
+
+
+      /*
+        TEXT 02
+        */
+
+      textTimeline
+        .set(text2, {
+          visibility: "visible"
+        }, 0.27)
+
+        .to(text2, {
+          opacity: 1,
+          y: 0,
+          duration: 0.06,
+          ease: "power2.out"
+        }, 0.29)
+
+        .to(text2, {
+          opacity: 1,
+          duration: 0.12
+        }, 0.35)
+
+        .to(text2, {
+          opacity: 0,
+          y: -20,
+          duration: 0.06,
+          ease: "power2.in"
+        }, 0.47);
+
+
+      /*
+        TEXT 03
+        */
+
+      textTimeline
+        .set(text3, {
+          visibility: "visible"
+        }, 0.46)
+
+        .to(text3, {
+          opacity: 1,
+          y: 0,
+          duration: 0.06,
+          ease: "power2.out"
+        }, 0.48)
+
+        .to(text3, {
+          opacity: 1,
+          duration: 0.12
+        }, 0.54)
+
+        .to(text3, {
+          opacity: 0,
+          y: -20,
+          duration: 0.06,
+          ease: "power2.in"
+        }, 0.66);
+
+
+      /*
+        TEXT 04
+        */
+
+      textTimeline
+        .set(text4, {
+          visibility: "visible"
+        }, 0.65)
+
+        .to(text4, {
+          opacity: 1,
+          y: 0,
+          duration: 0.06,
+          ease: "power2.out"
+        }, 0.67)
+
+        .to(text4, {
+          opacity: 1,
+          duration: 0.18
+        }, 0.73)
+
+        .to(text4, {
+          opacity: 0,
+          y: -20,
+          duration: 0.07,
+          ease: "power2.in"
+        }, 0.94);
+
+
+      /*
+        SCROLL INDICATOR
+        */
+
+      gsap.to(".scroll-indicator", {
+        opacity: 0,
+
+        scrollTrigger: {
+          trigger: scene,
+          start: "top top",
+          end: "top+=15% top",
+
+          scrub: true
+        }
+      });
+
+    });
+
+
+    /*
+      --------------------------------------------------
+      REDUCED MOTION
+      --------------------------------------------------
+
+      If the visitor has requested reduced motion,
+      leave the video on its opening frame.
+    */
+
+    if (
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      video.pause();
+
+      video.addEventListener("loadedmetadata", () => {
+        video.currentTime = 0;
+      });
+    }
+  </script>
+
+</body>
 </html>
