@@ -1,0 +1,837 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Build Your Own — MudPies</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --cream: #F5F0E8;
+  --parchment:#EDE5D4;
+  --sand: #D9C9A8;
+  --clay: #B8926A;
+  --terracotta: #A0614A;
+  --umber: #6B4A32;
+  --bark: #3E2A1A;
+  --sage: #8A9A7A;
+  --moss: #5C6E50;
+  --fog: rgba(62,42,26,0.08);
+}
+html { scroll-behavior: smooth; }
+body {
+  background-color: var(--cream);
+  color: var(--bark);
+  font-family: 'Jost', sans-serif;
+  font-weight: 300;
+  font-size: 16px;
+  line-height: 1.8;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem 5vw;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(245, 240, 232, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--fog);
+}
+.nav-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  color: var(--umber);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.nav-links { display: flex; gap: 2.5rem; list-style: none; }
+.nav-links a {
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--umber);
+  opacity: 0.7;
+  transition: opacity 0.3s;
+}
+.nav-links a:hover { opacity: 1; }
+.nav-links a.active { opacity: 1; border-bottom: 1px solid var(--terracotta); padding-bottom: 4px; }
+
+/* ── Page intro ── */
+.intro { padding: 7vh 5vw 2vh; max-width: 1100px; margin: 0 auto; animation: fadeUp 1.1s cubic-bezier(0.16,1,0.3,1) both; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+.eyebrow {
+  font-size: 0.7rem; letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--terracotta); margin-bottom: 1.2rem;
+}
+.intro h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.2rem, 4.5vw, 3.4rem);
+  font-weight: 300; line-height: 1.12; color: var(--bark); max-width: 700px; margin-bottom: 1rem;
+}
+.intro h1 em { font-style: italic; color: var(--umber); }
+.intro p { font-size: 1rem; color: var(--umber); max-width: 540px; line-height: 1.85; }
+
+/* ── Lab layout ── */
+.lab {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 3.5vw;
+  padding: 4vh 5vw 10vh;
+  max-width: 1280px;
+  margin: 0 auto;
+  align-items: start;
+}
+
+/* ── Stage (left) ── */
+.stage-wrap { position: sticky; top: 110px; }
+.stage {
+  position: relative;
+  background: linear-gradient(160deg, var(--parchment) 0%, var(--cream) 100%);
+  border: 1px solid var(--fog);
+  border-radius: 22px;
+  padding: 3rem 2rem 2rem;
+  perspective: 1400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 480px;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+.stage.dragging { cursor: grabbing; }
+.pie-turntable { width: 100%; max-width: 420px; transform-style: preserve-3d; }
+#pieSvg { width: 100%; height: auto; display: block; filter: drop-shadow(0 18px 26px rgba(62,42,26,0.16)); }
+
+.stage-hint {
+  margin-top: 1.4rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--clay);
+  opacity: 0.8;
+  text-align: center;
+}
+.stage-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  margin-top: 1.6rem;
+  padding-top: 1.4rem;
+  border-top: 1px solid var(--fog);
+}
+.pie-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--umber);
+}
+.rotate-toggle {
+  display: flex; align-items: center; gap: 0.6rem;
+  font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--umber);
+  cursor: pointer;
+}
+.switch {
+  width: 34px; height: 19px; border-radius: 20px; background: var(--sand);
+  position: relative; transition: background 0.25s; flex-shrink: 0;
+}
+.switch::after {
+  content: ''; position: absolute; top: 2px; left: 2px; width: 15px; height: 15px;
+  border-radius: 50%; background: var(--parchment); transition: transform 0.25s;
+}
+.switch.on { background: var(--terracotta); }
+.switch.on::after { transform: translateX(15px); background: #fff; }
+
+/* ── Controls (right) ── */
+.controls { display: flex; flex-direction: column; gap: 1.4rem; }
+.panel {
+  background: var(--parchment);
+  border: 1px solid var(--fog);
+  border-radius: 18px;
+  padding: 1.6rem 1.7rem;
+}
+.panel h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 400;
+  font-size: 1.05rem;
+  color: var(--umber);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+.panel h3 .val { font-family:'Jost', sans-serif; font-size:0.7rem; letter-spacing:0.08em; color: var(--clay); text-transform: uppercase; }
+
+.chip-row { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+.chip {
+  font-family: 'Jost', sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--umber);
+  background: var(--cream);
+  border: 1px solid var(--sand);
+  border-radius: 60px;
+  padding: 0.55rem 1.1rem;
+  cursor: pointer;
+  transition: background 0.25s, border-color 0.25s, color 0.25s, transform 0.15s;
+}
+.chip:hover { border-color: var(--clay); transform: translateY(-1px); }
+.chip.active { background: var(--umber); border-color: var(--umber); color: var(--parchment); }
+
+input[type="range"] {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 3px; background: var(--sand); border-radius: 3px; outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 17px; height: 17px; border-radius: 50%;
+  background: var(--terracotta); border: 2px solid var(--parchment); cursor: pointer;
+  box-shadow: 0 1px 4px rgba(62,42,26,0.3);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 17px; height: 17px; border-radius: 50%; background: var(--terracotta);
+  border: 2px solid var(--parchment); cursor: pointer;
+}
+
+.swatch-row { display: flex; flex-wrap: wrap; gap: 0.7rem; align-items: center; }
+.swatch {
+  width: 30px; height: 30px; border-radius: 50%; cursor: pointer;
+  border: 2px solid transparent; box-shadow: inset 0 0 0 1px rgba(62,42,26,0.12);
+  transition: transform 0.15s, border-color 0.2s;
+}
+.swatch:hover { transform: scale(1.08); }
+.swatch.active { border-color: var(--bark); }
+.custom-color-wrap {
+  width: 30px; height: 30px; border-radius: 50%; position: relative; cursor: pointer;
+  background: conic-gradient(from 0deg, #A0614A, #B8926A, #8A9A7A, #5C6E50, #6B4A32, #D9C9A8, #A0614A);
+  box-shadow: inset 0 0 0 1px rgba(62,42,26,0.12);
+}
+.custom-color-wrap input[type="color"] {
+  position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; border: none;
+}
+
+.topping-list { display: flex; flex-direction: column; gap: 0.15rem; }
+.topping-row {
+  display: flex; align-items: center; gap: 0.8rem; padding: 0.55rem 0.2rem;
+  cursor: pointer; border-bottom: 1px solid var(--fog);
+}
+.topping-row:last-child { border-bottom: none; }
+.topping-row input { accent-color: var(--terracotta); width: 15px; height: 15px; cursor: pointer; }
+.topping-row span { font-size: 0.88rem; color: var(--umber); }
+.topping-row .icon { width: 20px; height: 20px; flex-shrink: 0; }
+
+.actions { display: flex; flex-wrap: wrap; gap: 0.8rem; }
+.btn-primary, .btn-ghost {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 0.85rem 1.7rem;
+  font-family: 'Jost', sans-serif; font-size: 0.72rem; font-weight: 400;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  text-decoration: none; border-radius: 60px; cursor: pointer;
+  transition: background 0.3s, transform 0.2s, border-color 0.3s;
+  border: 1px solid transparent;
+}
+.btn-primary { background: var(--umber); color: var(--parchment); }
+.btn-primary:hover { background: var(--bark); transform: translateY(-1px); }
+.btn-ghost { background: transparent; color: var(--umber); border-color: var(--clay); }
+.btn-ghost:hover { background: var(--fog); border-color: var(--umber); transform: translateY(-1px); }
+
+footer {
+  padding: 3rem 5vw;
+  display: flex; justify-content: space-between; align-items: center;
+  border-top: 1px solid var(--fog);
+}
+.footer-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; color: var(--umber); opacity: 0.6; }
+.footer-note { font-size: 0.75rem; color: var(--clay); opacity: 0.7; }
+
+@media (max-width: 860px) {
+  .lab { grid-template-columns: 1fr; }
+  .stage-wrap { position: static; }
+  footer { flex-direction: column; gap: 1rem; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="./index.html" class="nav-logo">
+    <img src="./logo.png" alt="Mudpies logo" style="width:1in; height:1in; object-fit:contain;">
+    <span>Mudpies</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="./index.html">Collection</a></li>
+    <li><a href="./process.html">The Process</a></li>
+    <li><a href="./build.html" class="active">Build Your Own</a></li>
+  </ul>
+</nav>
+
+<main>
+  <div class="intro">
+    <p class="eyebrow">The Studio Lab</p>
+    <h1>Shape, color, and finish your own <em>mudpie.</em></h1>
+    <p>Mix and match form, tone, and texture, then spin it round to see every side. Nothing here is sent anywhere — it's just yours, live, on this page.</p>
+  </div>
+
+  <div class="lab">
+    <!-- LEFT: DISPLAY -->
+    <div class="stage-wrap">
+      <div class="stage" id="stage">
+        <div class="pie-turntable" id="turntable">
+          <svg id="pieSvg" viewBox="0 0 440 420" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="pieGrad" cx="40%" cy="32%" r="78%">
+                <stop id="gradHi" offset="0%" stop-color="#EAD9C4"/>
+                <stop id="gradMid" offset="52%" stop-color="#A0614A"/>
+                <stop id="gradLo" offset="100%" stop-color="#3E2A1A"/>
+              </radialGradient>
+              <radialGradient id="tierGrad" cx="40%" cy="32%" r="78%">
+                <stop id="tierHi" offset="0%" stop-color="#EAD9C4"/>
+                <stop id="tierMid" offset="52%" stop-color="#8a4f3d"/>
+                <stop id="tierLo" offset="100%" stop-color="#3E2A1A"/>
+              </radialGradient>
+              <clipPath id="pieClip"><g id="clipInner"><path d="M220,110 C300,112 358,150 356,205 C354,258 302,300 220,302 C138,300 86,258 84,205 C82,150 140,112 220,110 Z"/></g></clipPath>
+              <filter id="softBlur" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="7"/></filter>
+            </defs>
+            <ellipse id="shadowEllipse" cx="220" cy="345" rx="150" ry="20" fill="rgba(62,42,26,0.22)" filter="url(#softBlur)"/>
+            <g id="pieBody"></g>
+            <g id="textureLayer" clip-path="url(#pieClip)"></g>
+            <g id="toppingsLayer"></g>
+          </svg>
+        </div>
+        <div class="stage-toolbar">
+          <span class="pie-name" id="pieName">Round Terracotta Mudpie</span>
+          <label class="rotate-toggle" id="rotateToggleWrap">
+            <span id="rotateLabel">Auto-spin</span>
+            <span class="switch on" id="rotateSwitch"></span>
+          </label>
+        </div>
+      </div>
+      <p class="stage-hint">Drag left or right to spin it yourself</p>
+    </div>
+
+    <!-- RIGHT: CONTROLS -->
+    <div class="controls">
+
+      <div class="panel">
+        <h3>Shape</h3>
+        <div class="chip-row" id="shapeChips">
+          <button class="chip active" data-shape="round">Round Mound</button>
+          <button class="chip" data-shape="oval">Oval</button>
+          <button class="chip" data-shape="flat">Flat Disc</button>
+          <button class="chip" data-shape="stacked">Stacked Tier</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Size <span class="val" id="sizeVal">Medium</span></h3>
+        <input type="range" id="sizeSlider" min="0.7" max="1.35" step="0.01" value="1">
+      </div>
+
+      <div class="panel">
+        <h3>Color</h3>
+        <div class="swatch-row" id="colorSwatches">
+          <span class="swatch active" style="background:#A0614A" data-color="#A0614A" title="Terracotta"></span>
+          <span class="swatch" style="background:#B8926A" data-color="#B8926A" title="Clay"></span>
+          <span class="swatch" style="background:#6B4A32" data-color="#6B4A32" title="Umber"></span>
+          <span class="swatch" style="background:#D9C9A8" data-color="#D9C9A8" title="Sand"></span>
+          <span class="swatch" style="background:#8A9A7A" data-color="#8A9A7A" title="Sage"></span>
+          <span class="swatch" style="background:#5C6E50" data-color="#5C6E50" title="Moss"></span>
+          <span class="custom-color-wrap" title="Custom color">
+            <input type="color" id="customColor" value="#A0614A">
+          </span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Surface</h3>
+        <div class="chip-row" id="textureChips">
+          <button class="chip active" data-texture="smooth">Smooth</button>
+          <button class="chip" data-texture="cracked">Sun-cracked</button>
+          <button class="chip" data-texture="speckled">Speckled</button>
+          <button class="chip" data-texture="swirled">Swirled</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Toppings</h3>
+        <div class="topping-list" id="toppingsList">
+          <label class="topping-row"><input type="checkbox" data-topping="leaf" checked><span>Dried leaf</span></label>
+          <label class="topping-row"><input type="checkbox" data-topping="twig"><span>Twig</span></label>
+          <label class="topping-row"><input type="checkbox" data-topping="pebble"><span>Pebbles</span></label>
+          <label class="topping-row"><input type="checkbox" data-topping="flower"><span>Pressed flower</span></label>
+          <label class="topping-row"><input type="checkbox" data-topping="seeds"><span>Seed scatter</span></label>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Finish up</h3>
+        <div class="actions">
+          <button class="btn-primary" id="randomizeBtn">Surprise me</button>
+          <button class="btn-ghost" id="resetBtn">Reset</button>
+          <button class="btn-ghost" id="downloadBtn">Save as image</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<footer>
+  <span class="footer-logo">Mudpies</span>
+  <span class="footer-note">Handcrafted with care &middot; Earth-derived materials</span>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  // ── State ──────────────────────────────────────────────
+  var state = {
+    shape: 'round',
+    size: 1,
+    color: '#A0614A',
+    texture: 'smooth',
+    toppings: { leaf:true, twig:false, pebble:false, flower:false, seeds:false },
+    autoRotate: true,
+    rotY: -18
+  };
+
+  var MOUND = "M220,110 C300,112 358,150 356,205 C354,258 302,300 220,302 C138,300 86,258 84,205 C82,150 140,112 220,110 Z";
+  var COLOR_NAMES = { '#A0614A':'Terracotta', '#B8926A':'Clay', '#6B4A32':'Umber', '#D9C9A8':'Sand', '#8A9A7A':'Sage', '#5C6E50':'Moss' };
+  var SHAPE_NAMES = { round:'Round Mound', oval:'Oval', flat:'Flat Disc', stacked:'Stacked Tier' };
+  var TOPPING_LABEL = { leaf:'Leaf', twig:'Twig', pebble:'Pebbles', flower:'Flower', seeds:'Seeds' };
+
+  // ── Color helpers ──────────────────────────────────────
+  function hexToRgb(hex){
+    hex = hex.replace('#','');
+    if (hex.length === 3) hex = hex.split('').map(function(c){ return c+c; }).join('');
+    var num = parseInt(hex, 16);
+    return { r: (num>>16)&255, g: (num>>8)&255, b: num&255 };
+  }
+  function rgbToHex(r,g,b){
+    function h(v){ v = Math.max(0, Math.min(255, Math.round(v))); var s = v.toString(16); return s.length===1 ? '0'+s : s; }
+    return '#' + h(r) + h(g) + h(b);
+  }
+  function mix(hex, target, amt){
+    var c = hexToRgb(hex), t = hexToRgb(target);
+    return rgbToHex(c.r + (t.r-c.r)*amt, c.g + (t.g-c.g)*amt, c.b + (t.b-c.b)*amt);
+  }
+  function lighten(hex, amt){ return mix(hex, '#ffffff', amt); }
+  function darken(hex, amt){ return mix(hex, '#000000', amt); }
+
+  // ── Element refs ───────────────────────────────────────
+  var pieBody = document.getElementById('pieBody');
+  var textureLayer = document.getElementById('textureLayer');
+  var toppingsLayer = document.getElementById('toppingsLayer');
+  var clipInner = document.getElementById('clipInner');
+  var shadowEllipse = document.getElementById('shadowEllipse');
+  var gradHi = document.getElementById('gradHi');
+  var gradMid = document.getElementById('gradMid');
+  var gradLo = document.getElementById('gradLo');
+  var tierHi = document.getElementById('tierHi');
+  var tierMid = document.getElementById('tierMid');
+  var tierLo = document.getElementById('tierLo');
+  var pieGrad = document.getElementById('pieGrad');
+  var turntable = document.getElementById('turntable');
+  var stage = document.getElementById('stage');
+  var pieName = document.getElementById('pieName');
+
+  // ── Topping markup, anchored around the mound's top ────
+  function toppingMarkup(kind, cx, cy, rot){
+    rot = rot || 0;
+    var g = 'transform="translate(' + cx + ',' + cy + ') rotate(' + rot + ')"';
+    if (kind === 'leaf') {
+      return '<g ' + g + '><path d="M0,-16 C10,-12 12,0 0,14 C-12,0 -10,-12 0,-16 Z" fill="#6B7A4F" stroke="#4a5638" stroke-width="0.8"/><line x1="0" y1="-14" x2="0" y2="12" stroke="#4a5638" stroke-width="0.7"/></g>';
+    }
+    if (kind === 'twig') {
+      return '<g ' + g + '><line x1="-18" y1="6" x2="18" y2="-6" stroke="#6B4A32" stroke-width="3" stroke-linecap="round"/><line x1="-6" y1="3" x2="-12" y2="-6" stroke="#6B4A32" stroke-width="2" stroke-linecap="round"/><line x1="6" y1="-1" x2="12" y2="-10" stroke="#6B4A32" stroke-width="2" stroke-linecap="round"/></g>';
+    }
+    if (kind === 'pebble') {
+      return '<g ' + g + '><ellipse cx="-10" cy="4" rx="9" ry="6" fill="#9C9284"/><ellipse cx="9" cy="6" rx="11" ry="7" fill="#B4AA9A"/><ellipse cx="0" cy="-6" rx="7" ry="5" fill="#8A8172"/></g>';
+    }
+    if (kind === 'flower') {
+      var petals = '';
+      for (var i=0;i<5;i++){
+        var a = i * 72;
+        petals += '<ellipse cx="0" cy="-9" rx="4.5" ry="8" fill="#C98B8B" transform="rotate(' + a + ')"/>';
+      }
+      return '<g ' + g + '>' + petals + '<circle r="4" fill="#D9A544"/></g>';
+    }
+    if (kind === 'seeds') {
+      var dots = '';
+      var pos = [[-10,-4],[6,-8],[-4,6],[12,4],[0,0]];
+      for (var j=0;j<pos.length;j++){
+        dots += '<circle cx="' + pos[j][0] + '" cy="' + pos[j][1] + '" r="1.8" fill="#4a3420"/>';
+      }
+      return '<g ' + g + '>' + dots + '</g>';
+    }
+    return '';
+  }
+
+  function buildToppings(shape){
+    var lift = (shape === 'stacked') ? -150 : 0;
+    var wide = (shape === 'flat') ? 1.15 : 1;
+    var anchors = {
+      leaf:   [173*wide + 220*(1-wide), 158 + lift, -18],
+      twig:   [190, 260 + lift*0.3, 8],
+      pebble: [205, 275 + lift*0.15, 0],
+      flower: [262, 152 + lift, 10],
+      seeds:  [222, 190 + lift, 0]
+    };
+    var out = '';
+    Object.keys(state.toppings).forEach(function(key){
+      if (state.toppings[key]) {
+        var a = anchors[key];
+        out += toppingMarkup(key, a[0], a[1], a[2]);
+      }
+    });
+    return out;
+  }
+
+  // ── Texture overlays (clipped to pie silhouette) ───────
+  function buildTexture(shade){
+    if (state.texture === 'smooth') return '';
+    if (state.texture === 'cracked') {
+      var cracks = [
+        "M150,150 C170,175 160,210 185,240",
+        "M260,140 C255,175 275,200 250,235",
+        "M200,120 C205,150 190,170 210,195",
+        "M300,190 C280,205 285,230 265,255"
+      ];
+      var out = '';
+      cracks.forEach(function(d){
+        out += '<path d="' + d + '" fill="none" stroke="' + shade + '" stroke-width="2.2" opacity="0.4" stroke-linecap="round"/>';
+      });
+      return out;
+    }
+    if (state.texture === 'speckled') {
+      var pts = [[130,170],[160,140],[190,200],[220,150],[250,190],[280,160],[300,210],[150,230],[200,250],[240,230],[270,240],[175,190],[310,180],[140,200],[260,270],[210,280],[290,150],[165,255],[230,170],[300,230]];
+      var out2 = '';
+      pts.forEach(function(p){
+        out2 += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="' + (1.4 + (p[0]%3)) + '" fill="' + shade + '" opacity="0.35"/>';
+      });
+      return out2;
+    }
+    if (state.texture === 'swirled') {
+      var out3 = '';
+      out3 += '<path d="M100,205 C130,150 310,150 340,205 C310,260 130,260 100,205" fill="none" stroke="' + shade + '" stroke-width="2" opacity="0.28"/>';
+      out3 += '<path d="M125,205 C150,170 290,170 315,205 C290,240 150,240 125,205" fill="none" stroke="' + shade + '" stroke-width="2" opacity="0.25"/>';
+      out3 += '<path d="M150,205 C170,185 270,185 290,205 C270,225 170,225 150,205" fill="none" stroke="' + shade + '" stroke-width="2" opacity="0.22"/>';
+      return out3;
+    }
+    return '';
+  }
+
+  // ── Crimped rim for the flat disc ──────────────────────
+  function crimpRim(){
+    var pts = '';
+    var bumps = 22, cx = 220, cy = 205, rx = 168, ry = 96;
+    var d = '';
+    for (var i=0; i<=bumps; i++){
+      var t = (i/bumps) * Math.PI * 2;
+      var wobble = (i % 2 === 0) ? 1.04 : 0.97;
+      var x = cx + Math.cos(t) * rx * wobble;
+      var y = cy + Math.sin(t) * ry * wobble;
+      d += (i===0 ? 'M' : 'L') + x.toFixed(1) + ',' + y.toFixed(1) + ' ';
+    }
+    d += 'Z';
+    return '<path d="' + d + '" fill="none" stroke="#3E2A1A" stroke-width="1.4" opacity="0.22"/>';
+  }
+
+  // ── Main render ─────────────────────────────────────────
+  function render(){
+    var scale = state.size;
+    var cx = 220, cy = 205;
+
+    // gradient colors from base color
+    var hi = lighten(state.color, 0.55);
+    var mid = state.color;
+    var lo = darken(state.color, 0.55);
+    gradHi.setAttribute('stop-color', hi);
+    gradMid.setAttribute('stop-color', mid);
+    gradLo.setAttribute('stop-color', lo);
+    var tHi = lighten(state.color, 0.45), tMid = darken(state.color, 0.12), tLo = darken(state.color, 0.6);
+    tierHi.setAttribute('stop-color', tHi);
+    tierMid.setAttribute('stop-color', tMid);
+    tierLo.setAttribute('stop-color', tLo);
+
+    var bodyMarkup = '';
+    var clipMarkup = '';
+    var shadowRx = 150 * scale, shadowRy = 20 * scale;
+
+    if (state.shape === 'round') {
+      var t = 'translate(' + cx + ',' + cy + ') scale(' + scale + ') translate(' + (-cx) + ',' + (-cy) + ')';
+      bodyMarkup = '<path d="' + MOUND + '" fill="url(#pieGrad)" transform="' + t + '"/>';
+      clipMarkup = '<g transform="' + t + '"><path d="' + MOUND + '"/></g>';
+    } else if (state.shape === 'oval') {
+      var t2 = 'translate(' + cx + ',' + cy + ') scale(' + (scale*1.05) + ',' + (scale*0.74) + ') translate(' + (-cx) + ',' + (-cy) + ')';
+      bodyMarkup = '<path d="' + MOUND + '" fill="url(#pieGrad)" transform="' + t2 + '"/>';
+      clipMarkup = '<g transform="' + t2 + '"><path d="' + MOUND + '"/></g>';
+    } else if (state.shape === 'flat') {
+      var t3 = 'translate(' + cx + ',' + cy + ') scale(' + (scale*1.18) + ',' + (scale*0.46) + ') translate(' + (-cx) + ',' + (-cy) + ')';
+      bodyMarkup = '<path d="' + MOUND + '" fill="url(#pieGrad)" transform="' + t3 + '"/>' + crimpRim();
+      clipMarkup = '<g transform="' + t3 + '"><path d="' + MOUND + '"/></g>';
+      shadowRx = 172 * scale; shadowRy = 22 * scale;
+    } else if (state.shape === 'stacked') {
+      var tiers = [
+        { s: 1.0 * scale,  dy: 0,    grad: 'pieGrad' },
+        { s: 0.68 * scale, dy: -100, grad: 'tierGrad' },
+        { s: 0.44 * scale, dy: -165, grad: 'pieGrad' }
+      ];
+      tiers.forEach(function(tier){
+        var tt = 'translate(' + cx + ',' + (cy + tier.dy) + ') scale(' + tier.s + ') translate(' + (-cx) + ',' + (-cy) + ')';
+        bodyMarkup += '<path d="' + MOUND + '" fill="url(#' + tier.grad + ')" transform="' + tt + '"/>';
+      });
+      var tClip = 'translate(' + cx + ',' + (cy - 60) + ') scale(' + scale + ') translate(' + (-cx) + ',' + (-cy) + ')';
+      clipMarkup = '<g transform="' + tClip + '"><ellipse cx="' + cx + '" cy="' + cy + '" rx="170" ry="150"/></g>';
+      shadowRx = 145 * scale; shadowRy = 18 * scale;
+    }
+
+    pieBody.innerHTML = bodyMarkup;
+    clipInner.outerHTML = clipMarkup.replace('<g ', '<g id="clipInner" ');
+    // re-fetch since outerHTML replaced the node
+    clipInner = document.getElementById('clipInner');
+
+    var textureShade = darken(state.color, 0.65);
+    textureLayer.innerHTML = buildTexture(textureShade);
+
+    toppingsLayer.innerHTML = buildToppings(state.shape);
+
+    shadowEllipse.setAttribute('rx', shadowRx.toFixed(1));
+    shadowEllipse.setAttribute('ry', shadowRy.toFixed(1));
+
+    pieName.textContent = (COLOR_NAMES[state.color] || 'Custom') + ' ' + SHAPE_NAMES[state.shape] + ' Mudpie';
+
+    updateLight();
+    persist();
+  }
+
+  // ── Rotation / light response ──────────────────────────
+  function updateLight(){
+    var rad = state.rotY * Math.PI / 180;
+    var scaleX = Math.cos(rad);
+    var skew = Math.sin(rad) * 3;
+    turntable.style.transform = 'rotateX(9deg) scaleX(' + (0.72 + Math.abs(scaleX)*0.28) + ') rotate(' + skew + 'deg)';
+    var hiX = 40 + Math.sin(rad) * 22;
+    pieGrad.setAttribute('cx', hiX + '%');
+  }
+
+  // ── Drag to rotate ──────────────────────────────────────
+  var dragging = false, lastX = 0;
+  function onDown(e){
+    dragging = true;
+    state.autoRotate = false;
+    updateRotateSwitch();
+    stage.classList.add('dragging');
+    lastX = (e.touches ? e.touches[0].clientX : e.clientX);
+  }
+  function onMove(e){
+    if (!dragging) return;
+    var x = (e.touches ? e.touches[0].clientX : e.clientX);
+    var dx = x - lastX;
+    lastX = x;
+    state.rotY += dx * 0.6;
+    updateLight();
+  }
+  function onUp(){ dragging = false; stage.classList.remove('dragging'); }
+
+  stage.addEventListener('mousedown', onDown);
+  window.addEventListener('mousemove', onMove);
+  window.addEventListener('mouseup', onUp);
+  stage.addEventListener('touchstart', onDown, {passive:true});
+  window.addEventListener('touchmove', onMove, {passive:true});
+  window.addEventListener('touchend', onUp);
+
+  function autoSpinLoop(){
+    if (state.autoRotate && !dragging) {
+      state.rotY += 0.35;
+      updateLight();
+    }
+    requestAnimationFrame(autoSpinLoop);
+  }
+  requestAnimationFrame(autoSpinLoop);
+
+  // ── Controls wiring ─────────────────────────────────────
+  var rotateSwitch = document.getElementById('rotateSwitch');
+  var rotateLabel = document.getElementById('rotateLabel');
+  function updateRotateSwitch(){
+    rotateSwitch.classList.toggle('on', state.autoRotate);
+    rotateLabel.textContent = state.autoRotate ? 'Auto-spin' : 'Paused';
+  }
+  document.getElementById('rotateToggleWrap').addEventListener('click', function(){
+    state.autoRotate = !state.autoRotate;
+    updateRotateSwitch();
+  });
+
+  document.getElementById('shapeChips').addEventListener('click', function(e){
+    var btn = e.target.closest('.chip');
+    if (!btn) return;
+    state.shape = btn.getAttribute('data-shape');
+    setActive('shapeChips', btn);
+    render();
+  });
+
+  document.getElementById('textureChips').addEventListener('click', function(e){
+    var btn = e.target.closest('.chip');
+    if (!btn) return;
+    state.texture = btn.getAttribute('data-texture');
+    setActive('textureChips', btn);
+    render();
+  });
+
+  function setActive(containerId, btn){
+    var c = document.getElementById(containerId);
+    Array.prototype.forEach.call(c.querySelectorAll('.chip'), function(el){ el.classList.remove('active'); });
+    btn.classList.add('active');
+  }
+
+  var sizeSlider = document.getElementById('sizeSlider');
+  var sizeVal = document.getElementById('sizeVal');
+  function sizeLabel(v){
+    if (v < 0.85) return 'Small';
+    if (v > 1.15) return 'Large';
+    return 'Medium';
+  }
+  sizeSlider.addEventListener('input', function(){
+    state.size = parseFloat(sizeSlider.value);
+    sizeVal.textContent = sizeLabel(state.size);
+    render();
+  });
+
+  document.getElementById('colorSwatches').addEventListener('click', function(e){
+    var sw = e.target.closest('.swatch');
+    if (!sw) return;
+    state.color = sw.getAttribute('data-color');
+    document.getElementById('customColor').value = state.color;
+    Array.prototype.forEach.call(document.querySelectorAll('.swatch'), function(el){ el.classList.remove('active'); });
+    sw.classList.add('active');
+    render();
+  });
+
+  document.getElementById('customColor').addEventListener('input', function(e){
+    state.color = e.target.value;
+    Array.prototype.forEach.call(document.querySelectorAll('.swatch'), function(el){ el.classList.remove('active'); });
+    render();
+  });
+
+  document.getElementById('toppingsList').addEventListener('change', function(e){
+    var cb = e.target.closest('input[type=checkbox]');
+    if (!cb) return;
+    state.toppings[cb.getAttribute('data-topping')] = cb.checked;
+    render();
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', function(){
+    state.shape = 'round'; state.size = 1; state.color = '#A0614A'; state.texture = 'smooth';
+    state.toppings = { leaf:true, twig:false, pebble:false, flower:false, seeds:false };
+    syncControlsToState();
+    render();
+  });
+
+  document.getElementById('randomizeBtn').addEventListener('click', function(){
+    var shapes = ['round','oval','flat','stacked'];
+    var textures = ['smooth','cracked','speckled','swirled'];
+    var colors = Object.keys(COLOR_NAMES);
+    state.shape = shapes[Math.floor(Math.random()*shapes.length)];
+    state.texture = textures[Math.floor(Math.random()*textures.length)];
+    state.color = colors[Math.floor(Math.random()*colors.length)];
+    state.size = +(0.75 + Math.random()*0.55).toFixed(2);
+    var keys = Object.keys(state.toppings);
+    keys.forEach(function(k){ state.toppings[k] = Math.random() < 0.32; });
+    if (!keys.some(function(k){ return state.toppings[k]; })) {
+      state.toppings[keys[Math.floor(Math.random()*keys.length)]] = true;
+    }
+    syncControlsToState();
+    render();
+  });
+
+  function syncControlsToState(){
+    setActive('shapeChips', document.querySelector('#shapeChips [data-shape="' + state.shape + '"]'));
+    setActive('textureChips', document.querySelector('#textureChips [data-texture="' + state.texture + '"]'));
+    sizeSlider.value = state.size;
+    sizeVal.textContent = sizeLabel(state.size);
+    document.getElementById('customColor').value = state.color;
+    Array.prototype.forEach.call(document.querySelectorAll('.swatch'), function(el){
+      el.classList.toggle('active', el.getAttribute('data-color') === state.color);
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('#toppingsList input'), function(cb){
+      cb.checked = !!state.toppings[cb.getAttribute('data-topping')];
+    });
+  }
+
+  // ── Download as PNG ─────────────────────────────────────
+  document.getElementById('downloadBtn').addEventListener('click', function(){
+    var svg = document.getElementById('pieSvg');
+    var serializer = new XMLSerializer();
+    var svgStr = serializer.serializeToString(svg);
+    var svgBlob = new Blob([svgStr], {type: 'image/svg+xml;charset=utf-8'});
+    var url = URL.createObjectURL(svgBlob);
+    var img = new Image();
+    img.onload = function(){
+      var size = 900;
+      var canvas = document.createElement('canvas');
+      canvas.width = size; canvas.height = size;
+      var ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#F5F0E8';
+      ctx.fillRect(0,0,size,size);
+      ctx.drawImage(img, 0, 0, size, size);
+      URL.revokeObjectURL(url);
+      var a = document.createElement('a');
+      a.download = 'my-mudpie.png';
+      a.href = canvas.toDataURL('image/png');
+      a.click();
+    };
+    img.src = url;
+  });
+
+  // ── Persistence ──────────────────────────────────────────
+  function persist(){
+    try { localStorage.setItem('mudpie-design', JSON.stringify(state)); } catch(e){}
+  }
+  function restore(){
+    try {
+      var raw = localStorage.getItem('mudpie-design');
+      if (!raw) return;
+      var saved = JSON.parse(raw);
+      if (saved && saved.shape) {
+        state.shape = saved.shape; state.size = saved.size || 1;
+        state.color = saved.color || '#A0614A'; state.texture = saved.texture || 'smooth';
+        state.toppings = saved.toppings || state.toppings;
+        state.autoRotate = true;
+      }
+    } catch(e){}
+  }
+
+  // ── Init ──────────────────────────────────────────────
+  restore();
+  syncControlsToState();
+  updateRotateSwitch();
+  render();
+})();
+</script>
+</body>
+</html>
