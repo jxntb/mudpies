@@ -649,166 +649,177 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 
   <script>
-    gsap.registerPlugin(ScrollTrigger);
+  gsap.registerPlugin(ScrollTrigger);
 
-    const reducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
+  const reducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  ).matches;
 
-    /*
-      --------------------------------------------------
-      REUSABLE: pin a video scene and scrub it with scroll
-      --------------------------------------------------
+  // --------------------------------------------------
+  // Track when BOTH video pins exist before we build
+  // any of the scenes that come after/around them.
+  // This avoids a race where later ScrollTriggers get
+  // measured against a page layout that hasn't yet
+  // grown to include the pin-spacers.
+  // --------------------------------------------------
+  let scenesReady = 0;
+  const TOTAL_PINNED_SCENES = 2;
 
-      - video/scene: the elements to pin + scrub
-      - end: how long (in extra viewport heights) the
-        section stays pinned for
-      - buildTimeline(tl): callback where scene-specific
-        text timelines get added to the shared scrub
-        timeline (so text is driven by the SAME scroll
-        position as the video)
-    */
+  function onSceneReady() {
+    scenesReady++;
+    if (scenesReady === TOTAL_PINNED_SCENES) {
+      initDownstreamScenes();
+    }
+  }
 
-    function setupVideoScene({ video, scene, sceneInner, end, buildTimeline }) {
+  function setupVideoScene({ video, scene, sceneInner, end, buildTimeline, onReady }) {
 
-      if (reducedMotion) {
-        video.pause();
-        video.addEventListener("loadedmetadata", () => {
-          video.currentTime = 0;
-        });
-        return;
+    if (reducedMotion) {
+      video.pause();
+      video.addEventListener("loadedmetadata", () => {
+        video.currentTime = 0;
+      });
+      onReady();
+      return;
+    }
+
+    let targetTime = 0;
+    let currentTime = 0;
+
+    video.addEventListener("loadedmetadata", () => {
+
+      ScrollTrigger.create({
+        trigger: scene,
+        start: "top top",
+        end: end,
+        pin: true,
+        scrub: true,
+        anticipatePin: 1,
+        onUpdate: (self) => {
+          targetTime = self.progress * Math.max(0, video.duration - 0.05);
+        }
+      });
+
+      function updateVideo() {
+        currentTime += (targetTime - currentTime) * 0.22;
+
+        if (
+          video.readyState >= 2 &&
+          Math.abs(video.currentTime - currentTime) > 0.01
+        ) {
+          video.currentTime = currentTime;
+        }
+
+        requestAnimationFrame(updateVideo);
       }
 
-      let targetTime = 0;
-      let currentTime = 0;
+      updateVideo();
 
-      video.addEventListener("loadedmetadata", () => {
-
-        ScrollTrigger.create({
+      const tl = gsap.timeline({
+        scrollTrigger: {
           trigger: scene,
           start: "top top",
           end: end,
-          pin: true,
-          scrub: true,
-          anticipatePin: 1,
-          onUpdate: (self) => {
-            targetTime = self.progress * Math.max(0, video.duration - 0.05);
-          }
-        });
-
-        function updateVideo() {
-          currentTime += (targetTime - currentTime) * 0.22;
-
-          if (
-            video.readyState >= 2 &&
-            Math.abs(video.currentTime - currentTime) > 0.01
-          ) {
-            video.currentTime = currentTime;
-          }
-
-          requestAnimationFrame(updateVideo);
+          scrub: true
         }
-
-        updateVideo();
-
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: scene,
-            start: "top top",
-            end: end,
-            scrub: true
-          }
-        });
-
-        buildTimeline(tl);
-
-        /*
-          Fade the whole scene out right at the very end of
-          its pinned scroll, so the video dissolves toward
-          the page background just before it releases into
-          whatever comes next.
-        */
-
-        tl.to(sceneInner, {
-          opacity: 0,
-          duration: 0.05,
-          ease: "none"
-        }, 0.95);
-
       });
-    }
 
+      buildTimeline(tl);
 
-    /*
-      --------------------------------------------------
-      SCENE 1 — CAVE WALK
-      --------------------------------------------------
-    */
+      tl.to(sceneInner, {
+        opacity: 0,
+        duration: 0.05,
+        ease: "none"
+      }, 0.95);
 
-    const caveVideo = document.getElementById("caveVideo");
-    const caveScene = document.getElementById("caveScene");
-    const caveSceneInner = document.getElementById("caveSceneInner");
-
-    const intro = document.querySelector(".intro");
-    const cText1 = document.querySelector(".cave-text-1");
-    const cText2 = document.querySelector(".cave-text-2");
-    const cText3 = document.querySelector(".cave-text-3");
-    const cText4 = document.querySelector(".cave-text-4");
-
-    setupVideoScene({
-      video: caveVideo,
-      scene: caveScene,
-      sceneInner: caveSceneInner,
-      end: "bottom+=200% top",
-      buildTimeline: (tl) => {
-
-        /* INTRO */
-        tl.to(intro, { opacity: 0, duration: 0.08, ease: "none" }, 0.08);
-
-        /* TEXT 01 */
-        tl.set(cText1, { visibility: "visible" }, 0.08)
-          .to(cText1, { opacity: 1, y: 0, duration: 0.06, ease: "power2.out" }, 0.10)
-          .to(cText1, { opacity: 1, duration: 0.12 }, 0.16)
-          .to(cText1, { opacity: 0, y: -20, duration: 0.06, ease: "power2.in" }, 0.28);
-
-        /* TEXT 02 */
-        tl.set(cText2, { visibility: "visible" }, 0.27)
-          .to(cText2, { opacity: 1, y: 0, duration: 0.06, ease: "power2.out" }, 0.29)
-          .to(cText2, { opacity: 1, duration: 0.12 }, 0.35)
-          .to(cText2, { opacity: 0, y: -20, duration: 0.06, ease: "power2.in" }, 0.47);
-
-        /* TEXT 03 */
-        tl.set(cText3, { visibility: "visible" }, 0.46)
-          .to(cText3, { opacity: 1, y: 0, duration: 0.06, ease: "power2.out" }, 0.48)
-          .to(cText3, { opacity: 1, duration: 0.12 }, 0.54)
-          .to(cText3, { opacity: 0, y: -20, duration: 0.06, ease: "power2.in" }, 0.66);
-
-        /* TEXT 04 */
-        tl.set(cText4, { visibility: "visible" }, 0.65)
-          .to(cText4, { opacity: 1, y: 0, duration: 0.06, ease: "power2.out" }, 0.67)
-          .to(cText4, { opacity: 1, duration: 0.18 }, 0.73)
-          .to(cText4, { opacity: 0, y: -20, duration: 0.07, ease: "power2.in" }, 0.94);
-      }
+      onReady();
     });
+  }
 
 
-    /*
-      --------------------------------------------------
-      SCENE 2 — STATIC PHOTO (photo2.png)
-      --------------------------------------------------
+  // --------------------------------------------------
+  // SCENE 1 — CAVE WALK
+  // --------------------------------------------------
 
-      No pinning here — this section scrolls normally.
-      A sticky inner wrapper keeps the photo + text
-      framed to the viewport while the section's extra
-      scroll length gives the text room to fade in, hold,
-      and fade out before the next scene appears.
-    */
+  const caveVideo = document.getElementById("caveVideo");
+  const caveScene = document.getElementById("caveScene");
+  const caveSceneInner = document.getElementById("caveSceneInner");
 
+  const intro = document.querySelector(".intro");
+  const cText1 = document.querySelector(".cave-text-1");
+  const cText2 = document.querySelector(".cave-text-2");
+  const cText3 = document.querySelector(".cave-text-3");
+  const cText4 = document.querySelector(".cave-text-4");
+
+  setupVideoScene({
+    video: caveVideo,
+    scene: caveScene,
+    sceneInner: caveSceneInner,
+    end: "bottom+=200% top",
+    onReady: onSceneReady,
+    buildTimeline: (tl) => {
+
+      tl.to(intro, { opacity: 0, duration: 0.08, ease: "none" }, 0.08);
+
+      tl.set(cText1, { visibility: "visible" }, 0.08)
+        .to(cText1, { opacity: 1, y: 0, duration: 0.06, ease: "power2.out" }, 0.10)
+        .to(cText1, { opacity: 1, duration: 0.12 }, 0.16)
+        .to(cText1, { opacity: 0, y: -20, duration: 0.06, ease: "power2.in" }, 0.28);
+
+      tl.set(cText2, { visibility: "visible" }, 0.27)
+        .to(cText2, { opacity: 1, y: 0, duration: 0.06, ease: "power2.out" }, 0.29)
+        .to(cText2, { opacity: 1, duration: 0.12 }, 0.35)
+        .to(cText2, { opacity: 0, y: -20, duration: 0.06, ease: "power2.in" }, 0.47);
+
+      tl.set(cText3, { visibility: "visible" }, 0.46)
+        .to(cText3, { opacity: 1, y: 0, duration: 0.06, ease: "power2.out" }, 0.48)
+        .to(cText3, { opacity: 1, duration: 0.12 }, 0.54)
+        .to(cText3, { opacity: 0, y: -20, duration: 0.06, ease: "power2.in" }, 0.66);
+
+      tl.set(cText4, { visibility: "visible" }, 0.65)
+        .to(cText4, { opacity: 1, y: 0, duration: 0.06, ease: "power2.out" }, 0.67)
+        .to(cText4, { opacity: 1, duration: 0.18 }, 0.73)
+        .to(cText4, { opacity: 0, y: -20, duration: 0.07, ease: "power2.in" }, 0.94);
+    }
+  });
+
+
+  // --------------------------------------------------
+  // SCENE 3 — VALLEY WALK (pin still created eagerly;
+  // its downstream *cross-references* wait, see below)
+  // --------------------------------------------------
+
+  const valleyVideo = document.getElementById("valleyVideo");
+  const valleyScene = document.getElementById("valleyScene");
+  const valleySceneInner = document.getElementById("valleySceneInner");
+  const vText1 = document.querySelector(".valley-text-1");
+
+  setupVideoScene({
+    video: valleyVideo,
+    scene: valleyScene,
+    sceneInner: valleySceneInner,
+    end: "bottom+=200% top",
+    onReady: onSceneReady,
+    buildTimeline: (tl) => {
+      tl.set(vText1, { visibility: "visible" }, 0.80)
+        .to(vText1, { opacity: 1, y: 0, duration: 0.06, ease: "power2.out" }, 0.82)
+        .to(vText1, { opacity: 1, duration: 0.08 }, 0.88)
+        .to(vText1, { opacity: 0, y: -20, duration: 0.05, ease: "power2.in" }, 0.96);
+    }
+  });
+
+
+  // --------------------------------------------------
+  // Everything that depends on final page geometry
+  // (i.e. AFTER both pin-spacers exist) lives here.
+  // --------------------------------------------------
+
+  function initDownstreamScenes() {
+
+    // SCENE 2 — STATIC PHOTO
     if (!reducedMotion) {
-
       const staticText = document.getElementById("staticText");
-      const staticSticky = document.getElementById("staticSceneSticky");
-    
+
       gsap.timeline({
         scrollTrigger: {
           trigger: "#staticSceneWrapper",
@@ -817,28 +828,13 @@
           scrub: true
         }
       })
-        // Fade text in
         .to(staticText, { opacity: 1, duration: 0.15, ease: "none" }, 0.06)
-        // Keep text visible the whole time (no fade-out)
         .to(staticText, { opacity: 1, duration: 0.55 }, 0.21);
-        // NOTE: we removed the two lines that fade out text and wrapper
-    
+
     } else {
       document.getElementById("staticText").style.opacity = 1;
     }
 
-
-    /*
-      --------------------------------------------------
-      SCENE 3 — VALLEY WALK
-      --------------------------------------------------
-    */
-
-    const valleyVideo = document.getElementById("valleyVideo");
-    const valleyScene = document.getElementById("valleyScene");
-    const valleySceneInner = document.getElementById("valleySceneInner");
-    const vText1 = document.querySelector(".valley-text-1");
-    
     // Fade out the static photo as the valley scene starts
     if (!reducedMotion) {
       gsap.to("#staticSceneSticky", {
@@ -846,37 +842,14 @@
         ease: "none",
         scrollTrigger: {
           trigger: "#valleyScene",
-          start: "top center",   // adjust if you want it earlier/later
+          start: "top center",
           end: "top top",
           scrub: true
         }
       });
     }
-    
-    setupVideoScene({
-      video: valleyVideo,
-      scene: valleyScene,
-      sceneInner: valleySceneInner,
-      end: "bottom+=200% top",
-      buildTimeline: (tl) => {
-    
-        /* Text appears near the very end of the walk */
-        tl.set(vText1, { visibility: "visible" }, 0.80)
-          .to(vText1, { opacity: 1, y: 0, duration: 0.06, ease: "power2.out" }, 0.82)
-          .to(vText1, { opacity: 1, duration: 0.08 }, 0.88)
-          .to(vText1, { opacity: 0, y: -20, duration: 0.05, ease: "power2.in" }, 0.96);
-      }
-    });
 
-
-    /*
-      --------------------------------------------------
-      SCENE 4 — DISCOVER MORE
-      --------------------------------------------------
-
-      Simple fade-in footer bar as the page reaches its end.
-    */
-
+    // SCENE 4 — DISCOVER MORE
     if (!reducedMotion) {
       gsap.fromTo(
         "#discoverBar",
@@ -894,7 +867,13 @@
     } else {
       document.getElementById("discoverBar").style.opacity = 1;
     }
-  </script>
+
+    // Recalculate every ScrollTrigger against the now-final
+    // page layout (with both pin-spacers in place).
+    ScrollTrigger.refresh();
+  }
+
+</script>
 
 </body>
 </html>
