@@ -213,6 +213,11 @@
       color: rgba(243, 234, 219, 0.82);
     }
 
+    .valley-text-1 p {
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      font-weight: 500;
+    }
+
     .center p {
       margin-left: auto;
       margin-right: auto;
@@ -754,7 +759,7 @@
       video: caveVideo,
       scene: caveScene,
       sceneInner: caveSceneInner,
-      end: "bottom+=450% top",
+      end: "bottom+=200% top",
       buildTimeline: (tl) => {
 
         /* INTRO */
@@ -815,7 +820,7 @@
         .to(staticText, { opacity: 1, duration: 0.15, ease: "none" }, 0.06)
         .to(staticText, { opacity: 1, duration: 0.55 }, 0.21)
         .to(staticText, { opacity: 0, duration: 0.14, ease: "none" }, 0.76)
-        .to(staticSticky, { opacity: 0, duration: 0.10, ease: "none" }, 0.90);
+        .to(staticSticky, { opacity: 0, duration: 0.10, ease: "none" }, 0.98);
 
     } else {
       document.getElementById("staticText").style.opacity = 1;
@@ -837,7 +842,7 @@
       video: valleyVideo,
       scene: valleyScene,
       sceneInner: valleySceneInner,
-      end: "bottom+=450% top",
+      end: "bottom+=200% top",
       buildTimeline: (tl) => {
 
         /* Text appears near the very end of the walk */
