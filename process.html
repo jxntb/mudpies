@@ -215,7 +215,7 @@
 
     .valley-text-1 p {
       font-size: clamp(2.5rem, 5vw, 4.5rem);
-      font-weight: 500;
+      font-weight: 200;
     }
 
     .center p {
@@ -808,7 +808,7 @@
 
       const staticText = document.getElementById("staticText");
       const staticSticky = document.getElementById("staticSceneSticky");
-
+    
       gsap.timeline({
         scrollTrigger: {
           trigger: "#staticSceneWrapper",
@@ -817,11 +817,12 @@
           scrub: true
         }
       })
+        // Fade text in
         .to(staticText, { opacity: 1, duration: 0.15, ease: "none" }, 0.06)
-        .to(staticText, { opacity: 1, duration: 0.55 }, 0.21)
-        .to(staticText, { opacity: 0, duration: 0.14, ease: "none" }, 0.76)
-        .to(staticSticky, { opacity: 0, duration: 0.10, ease: "none" }, 0.98);
-
+        // Keep text visible the whole time (no fade-out)
+        .to(staticText, { opacity: 1, duration: 0.55 }, 0.21);
+        // NOTE: we removed the two lines that fade out text and wrapper
+    
     } else {
       document.getElementById("staticText").style.opacity = 1;
     }
@@ -837,14 +838,28 @@
     const valleyScene = document.getElementById("valleyScene");
     const valleySceneInner = document.getElementById("valleySceneInner");
     const vText1 = document.querySelector(".valley-text-1");
-
+    
+    // Fade out the static photo as the valley scene starts
+    if (!reducedMotion) {
+      gsap.to("#staticSceneSticky", {
+        opacity: 0,
+        ease: "none",
+        scrollTrigger: {
+          trigger: "#valleyScene",
+          start: "top center",   // adjust if you want it earlier/later
+          end: "top top",
+          scrub: true
+        }
+      });
+    }
+    
     setupVideoScene({
       video: valleyVideo,
       scene: valleyScene,
       sceneInner: valleySceneInner,
       end: "bottom+=200% top",
       buildTimeline: (tl) => {
-
+    
         /* Text appears near the very end of the walk */
         tl.set(vText1, { visibility: "visible" }, 0.80)
           .to(vText1, { opacity: 1, y: 0, duration: 0.06, ease: "power2.out" }, 0.82)
