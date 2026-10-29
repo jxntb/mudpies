@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script>
+  /* GitHub Pages serves this file for any missing address under /mudpies/, at
+     any depth (/mudpies/a/b/c). Anchor relative URLs to the site root so the
+     styles, images and links below resolve wherever the visitor landed. */
+  (function () {
+    var path = window.location.pathname;
+    var marker = '/mudpies/';
+    var at = path.indexOf(marker);
+    if (at !== -1) document.write('<base href="' + path.slice(0, at + marker.length) + '">');
+  })();
+</script>
+<title>Returned to the Earth — MudPies</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#efe9de">
+<link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..600,0..100;1,9..144,300..600,0..100&family=Instrument+Sans:wght@400..600&family=Fragment+Mono&display=swap">
+<link rel="stylesheet" href="assets/css/main.css">
+<style>
+  .lost { min-height: 100vh; min-height: 100svh; display: grid; align-items: center; padding: calc(var(--header-h) + 3rem) 0 4rem; }
+  .lost__grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); row-gap: 2.5rem; align-items: center; }
+  .lost__copy { grid-column: 1 / span 6; }
+  .lost__copy .h1 { margin: 1.5rem 0 1.75rem; }
+  .lost__copy .h1 em { color: var(--clay-ink); }
+  .lost__copy .lede { margin-bottom: 2.25rem; }
+  .lost__figure { grid-column: 8 / span 5; }
+  .lost__figure .frame { aspect-ratio: 800 / 440; }
+  .lost__figure img { filter: grayscale(0.35); }
+  @media (max-width: 900px) { .lost__copy, .lost__figure { grid-column: 1 / -1; } }
+  .lost-foot { padding: 1.25rem 0 1.5rem; border-top: 1px solid var(--line); font-family: var(--mono); font-size: var(--step--2); letter-spacing: 0.06em; text-transform: uppercase; color: var(--fg-soft); }
+</style>
+<script>(function(d){var c=d.documentElement.classList;c.add('js');if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches)c.add('motion-ok');setTimeout(function(){if(!(window.MudPies&&window.MudPies.ready))c.remove('motion-ok')},2500)})(document)</script>
+<script src="assets/js/site.js" defer></script>
+</head>
+<body id="top">
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header" data-header>
+  <div class="site-header__inner">
+    <a class="brand" href="index.html" aria-label="MudPies, home">
+      <svg class="brand__mark" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><circle cx="32" cy="32" r="30" fill="currentColor"/><circle cx="32" cy="32" r="21" fill="none" stroke="#efe9de" stroke-opacity=".42" stroke-width="2"/><circle cx="32" cy="32" r="11.5" fill="none" stroke="#efe9de" stroke-opacity=".32" stroke-width="2"/><path d="M31.5 2.5 29 13.5l4.6 5.6-3 8.4" fill="none" stroke="#161412" stroke-opacity=".72" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span class="brand__word">MudPies</span>
+    </a>
+    <nav class="site-nav" aria-label="Primary">
+      <ul>
+        <li><a href="collection.html">Collection</a></li>
+        <li><a href="process.html">The Process</a></li>
+        <li><a href="build.html">Build Your Own</a></li>
+        <li><a href="field-notes.html">Field Notes</a></li>
+        <li><a href="about.html">About</a></li>
+      </ul>
+    </nav>
+    <button class="menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-controls="site-menu">
+      <span data-menu-label>Menu</span>
+      <span class="menu-toggle__icon" aria-hidden="true"></span>
+    </button>
+  </div>
+</header>
+<nav class="site-menu" id="site-menu" aria-label="Menu">
+  <ul class="site-menu__list" role="list">
+    <li style="--i:0"><a href="index.html"><span>00</span>Home</a></li>
+    <li style="--i:1"><a href="collection.html"><span>01</span>Collection</a></li>
+    <li style="--i:2"><a href="process.html"><span>02</span>The Process</a></li>
+    <li style="--i:3"><a href="build.html"><span>03</span>Build Your Own</a></li>
+    <li style="--i:4"><a href="field-notes.html"><span>04</span>Field Notes</a></li>
+    <li style="--i:5"><a href="about.html"><span>05</span>About</a></li>
+    <li style="--i:6"><a href="faq.html"><span>06</span>Questions</a></li>
+  </ul>
+  <div class="site-menu__foot">
+    <span>Collection 07 — The Long Dry</span>
+    <span>Studio time <span data-readout-time>—</span></span>
+  </div>
+</nav>
+
+<main id="main" tabindex="-1" class="lost">
+  <div class="wrap lost__grid">
+    <div class="lost__copy">
+      <p class="label label--accent label--rule">Error 404 · Returned to the earth</p>
+      <h1 class="h1">This page has <em>returned to the earth.</em></h1>
+      <p class="lede">It was here once, or was meant to be. The studio regards this as completion rather than loss. Everything else is intact, for now.</p>
+      <div class="btn-row">
+        <a class="btn" href="index.html">Return to the house <span class="arrow" aria-hidden="true">→</span></a>
+        <a class="btn btn--ghost" href="collection.html">The Collection</a>
+      </div>
+    </div>
+    <figure class="lost__figure">
+      <div class="frame ticks"><img src="assets/images/no-031.webp" width="800" height="440" alt="Half of a dark grey disc of earth; the other half has dissolved."></div>
+      <figcaption class="figcaption"><span>No. 031, Low Tide</span><span>A precedent</span></figcaption>
+    </figure>
+  </div>
+</main>
+<footer class="wrap lost-foot">© <span data-year>2026</span> MudPies · A work of fiction</footer>
+</body>
+</html>
