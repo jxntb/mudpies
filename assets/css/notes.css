@@ -1,0 +1,126 @@
+/* MudPies — Field Notes (the journal) */
+
+.page-notes { --bg: var(--paper); background: var(--paper); }
+.notes-intro { border-bottom: 1px solid var(--line); }
+
+.notes-layout {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gutter);
+  padding-top: clamp(3rem, 6vw, 5rem);
+  padding-bottom: clamp(4rem, 8vw, 7rem);
+}
+.notes-index { grid-column: 1 / span 3; }
+.notes-index__inner { position: sticky; top: calc(var(--header-h) + 1.5rem); }
+.notes-index h2 { margin-bottom: 1rem; }
+.notes-filters { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 1rem; }
+.note-filter {
+  min-height: 2.25rem;
+  padding: 0.3rem 0.6rem;
+  border: 1px solid var(--line);
+  background: transparent;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: background var(--t-fast) ease, color var(--t-fast) ease, border-color var(--t-fast) ease;
+}
+.note-filter:hover { border-color: var(--line-strong); }
+.note-filter[aria-pressed="true"] { background: var(--ink); color: var(--ivory); border-color: var(--ink); }
+.notes-count { margin-bottom: 0.75rem; }
+.notes-toc { border-top: 1px solid var(--line-strong); }
+.notes-toc li { border-bottom: 1px solid var(--line); }
+.notes-toc li.is-filtered { display: none; }
+.notes-toc a {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.6rem 0;
+  font-size: var(--step--1);
+  line-height: 1.35;
+  text-decoration: none;
+  transition: color var(--t-fast) ease, padding var(--t-med) var(--ease-out);
+}
+.notes-toc a span { font-family: var(--mono); font-size: 0.68rem; color: var(--accent); padding-top: 0.15rem; min-width: 1.4rem; }
+.notes-toc a:hover { padding-left: 0.3rem; }
+.notes-toc a[aria-current="true"] { font-weight: 500; }
+
+.notes-feed { grid-column: 5 / span 8; }
+.note {
+  padding-bottom: clamp(3.5rem, 7vw, 6rem);
+  margin-bottom: clamp(3.5rem, 7vw, 6rem);
+  border-bottom: 1px solid var(--line);
+}
+.note.is-filtered { display: none; }
+.note__head { margin-bottom: 2rem; }
+.note__meta { display: flex; flex-wrap: wrap; gap: 0.35rem 1.25rem; margin-bottom: 1.1rem; }
+.note__meta span:first-child { color: var(--accent); }
+.note__title {
+  font-size: var(--step-4);
+  letter-spacing: -0.03em;
+  margin-bottom: 0.9rem;
+}
+.note--feature .note__title { font-size: var(--step-5); }
+.note__place { margin: 0; }
+.note__figure { margin: 0 0 2.25rem; }
+.note__figure .frame { aspect-ratio: 800 / 440; }
+.note__figure .note__frame--square { aspect-ratio: 16 / 10; }
+.note__figure--small { max-width: 26rem; }
+.note__figure--small .note__frame--square { aspect-ratio: 1; }
+.note__body { position: relative; max-width: 40rem; }
+.note__body .prose { max-width: none; margin-bottom: 1.5rem; }
+.note__sign {
+  margin: 2rem 0 0;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: var(--step-1);
+  font-weight: 300;
+  color: var(--fg-soft);
+  font-variation-settings: "SOFT" 100;
+}
+.marginal {
+  margin: 1.75rem 0 0;
+  padding: 0.25rem 0 0.25rem 1rem;
+  border-left: 1px solid var(--clay);
+  font-family: var(--mono);
+  font-size: 0.74rem;
+  line-height: 1.6;
+  letter-spacing: 0.02em;
+  color: var(--fg-soft);
+}
+@media (min-width: 1280px) {
+  /* Margin notes sit in the margin, as margin notes should. */
+  .note__body { max-width: 38rem; }
+  .marginal {
+    position: absolute;
+    top: 0.3rem;
+    left: calc(100% + 2.5rem);
+    width: 13rem;
+    margin: 0;
+  }
+}
+
+.inventory { margin: 0 0 1rem; border-top: 1px solid var(--line-strong); }
+.inventory > div {
+  display: grid;
+  grid-template-columns: minmax(9rem, 1fr) 2fr;
+  gap: var(--gutter);
+  padding: 0.8rem 0;
+  border-bottom: 1px solid var(--line);
+}
+.inventory dt { font-family: var(--mono); font-size: var(--step--2); letter-spacing: 0.06em; text-transform: uppercase; color: var(--fg-soft); padding-top: 0.2rem; }
+.inventory dd { margin: 0; font-family: var(--serif); font-size: var(--step-1); font-weight: 330; line-height: 1.35; font-variation-settings: "SOFT" 60; }
+
+.log { width: 100%; border-collapse: collapse; margin: 0 0 1.5rem; font-size: var(--step--1); }
+.log th, .log td { text-align: left; vertical-align: top; padding: 0.7rem 1rem 0.7rem 0; border-bottom: 1px solid var(--line); }
+.log thead th { font-family: var(--mono); font-size: var(--step--2); font-weight: 400; letter-spacing: 0.08em; text-transform: uppercase; color: var(--fg-soft); border-bottom-color: var(--line-strong); }
+.log tbody th { font-family: var(--mono); font-weight: 400; color: var(--accent); width: 3rem; }
+.log td:last-child { font-family: var(--mono); font-size: var(--step--2); letter-spacing: 0.04em; text-transform: uppercase; color: var(--fg-soft); white-space: nowrap; }
+
+@media (max-width: 900px) {
+  .notes-index { grid-column: 1 / -1; margin-bottom: 3rem; }
+  .notes-index__inner { position: static; }
+  .notes-toc { display: none; }
+  .notes-feed { grid-column: 1 / -1; }
+  .inventory > div { grid-template-columns: 1fr; gap: 0.25rem; }
+  .log td:last-child { white-space: normal; }
+}
